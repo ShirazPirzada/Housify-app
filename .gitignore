@@ -1,5 +1,5 @@
 node_modules
-.env
-.evn.e2e
+#.env
+#.evn.e2e
 .vscode
 dist
