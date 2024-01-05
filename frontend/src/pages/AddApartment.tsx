@@ -7,7 +7,7 @@ const AddApartment = () => {
     const {showToast} = useAppContext();
     const {mutate,isLoading} = useMutation(apiClient.addMyApartment,{
         onSuccess:()=>{
-            showToast({message: "Apartment Saved",type:"SUCCESS"})
+            showToast({message: "Apartment Saved!",type:"SUCCESS"})
         },
         onError:()=>{
             showToast({message:"Error Saving Apartment",type:"ERROR"})
