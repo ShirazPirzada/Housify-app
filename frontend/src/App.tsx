@@ -10,6 +10,7 @@ import SignIn from "./pages/SignIn";
 import AddApartment from "./pages/AddApartment";
 import { useAppContext } from "./contexts/AppContext";
 import MyApartments from "./pages/MyApartments";
+import EditApartment from "./pages/EditApartment";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -65,6 +66,14 @@ function App() {
               element={
                 <Layout>
                   <MyApartments></MyApartments>
+                </Layout>
+              }
+            />
+             <Route
+              path="/edit-apartment/:apartmentId"
+              element={
+                <Layout>
+                  <EditApartment></EditApartment>
                 </Layout>
               }
             />

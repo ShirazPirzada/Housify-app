@@ -55,7 +55,7 @@ const MyApartments = () => {
             <span className="flex justify-end">
               <Link
                 className="flex bg-blue-600 text-white text-xl font-bold p-2 hover:bg-blue-500"
-                to={`/eidt-apartment/${apartment._id}`}
+                to={`/edit-apartment/${apartment._id}`}
               >
                 View Details
               </Link>

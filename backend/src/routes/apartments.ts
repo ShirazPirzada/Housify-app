@@ -42,14 +42,7 @@ router.post(
       //Iteration images from post reques, encoding images as base 64
       //, creating string , then using cloudinary sdk to upload it ,
       //if all goes well url gets return.
-      const uploadPromises = imageFiles.map(async (image) => {
-        const base64 = Buffer.from(image.buffer).toString("base64");
-        let dataURI = "data:" + image.mimetype + ";base64," + base64;
-        const res = await cloudinary.v2.uploader.upload(dataURI);
-        return res.url;
-      });
-
-      const imageUrls = await Promise.all(uploadPromises);
+      const imageUrls = await uploadImages(imageFiles);
       newApartment.imageUrls = imageUrls;
       newApartment.lastUpdated = new Date();
       newApartment.userId = req.userId;
@@ -75,4 +68,65 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching apartments" });
   }
 });
+
+router.get("/:id", verifyToken, async (req: Request, res: Response) => {
+  const id = req.params.id.toString();
+  try {
+    const apartment = await Apartment.findOne({
+      _id: id,
+      userId: req.userId,
+    });
+    res.json(apartment);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching apartments" });
+  }
+});
+
+router.put(
+  "/:apartmentId",
+  verifyToken,
+  upload.array("imageFiles"),
+  async (req: Request, res: Response) => {
+    try {
+      const updatedApartment: ApartmentType = req.body;
+      updatedApartment.lastUpdated = new Date();
+
+      const apartment = await Apartment.findOneAndUpdate(
+        {
+          _id: req.params.apartmentId,
+          userId: req.userId,
+        },
+        updatedApartment,
+        { new: true }
+      );
+
+      if (!apartment) {
+        return res.status(404).json({ message: "Apartment not found" });
+      }
+      const files = req.files as Express.Multer.File[];
+      const updatedImgUrls = await uploadImages(files);
+      apartment.imageUrls = [
+        ...updatedImgUrls,
+        ...(updatedApartment.imageUrls || []),
+      ];
+      await apartment.save();
+      res.status(201).json(apartment);
+    } catch (error) {
+      res.status(500).json({ message: "Something went wrong" });
+    }
+  }
+);
+
+async function uploadImages(imageFiles: Express.Multer.File[]) {
+  const uploadPromises = imageFiles.map(async (image) => {
+    const base64 = Buffer.from(image.buffer).toString("base64");
+    let dataURI = "data:" + image.mimetype + ";base64," + base64;
+    const res = await cloudinary.v2.uploader.upload(dataURI);
+    return res.url;
+  });
+
+  const imageUrls = await Promise.all(uploadPromises);
+  return imageUrls;
+}
+
 export default router;
