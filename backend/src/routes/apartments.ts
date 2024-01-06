@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
 import cloudinary from "cloudinary";
-import Apartment, { ApartmentType } from "../models/apartment";
+import { ApartmentType } from "../shared/types";
 import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
+import Apartment from "../models/apartment";
 const router = express.Router();
 
 const storage = multer.memoryStorage(); //As the images come , will be send to cloudinary

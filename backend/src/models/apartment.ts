@@ -1,20 +1,6 @@
 import mongoose from "mongoose";
+import { ApartmentType } from "../shared/types";
 
-export type ApartmentType = {
-  _id: string;
-  userId: string;
-  name: string;
-  city: string;
-  country: string;
-  description: string;
-  type: string;
-  tenantCount: number;
-  facilities: string[];
-  pricePerMonth: number;
-  Rating: number;
-  imageUrls: string[];
-  lastUpdated: Date;
-};
 
 const apartmentSchema = new mongoose.Schema<ApartmentType>({
   userId: { type: String, required: true },
