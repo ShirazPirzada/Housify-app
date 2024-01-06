@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
 import AddApartment from "./pages/AddApartment";
 import { useAppContext } from "./contexts/AppContext";
+import MyApartments from "./pages/MyApartments";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -56,6 +57,14 @@ function App() {
               element={
                 <Layout>
                   <AddApartment></AddApartment>
+                </Layout>
+              }
+            />
+              <Route
+              path="/my-apartments"
+              element={
+                <Layout>
+                  <MyApartments></MyApartments>
                 </Layout>
               }
             />

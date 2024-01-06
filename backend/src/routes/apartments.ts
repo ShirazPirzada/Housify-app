@@ -64,4 +64,14 @@ router.post(
   }
 );
 
+// router.post();
+
+router.get("/", verifyToken, async (req: Request, res: Response) => {
+  try {
+    const apartments = await Apartment.find({ userId: req.userId });
+    res.json(apartments);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching apartments" });
+  }
+});
 export default router;

@@ -1,6 +1,6 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-
+import {ApartmentType} from '../../backend/src/models/apartment';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -65,6 +65,16 @@ export const addMyApartment = async (apartmentFormData: FormData) => {
   });
   if (!response.ok) {
     throw new Error("Failed to add Apartment");
+  }
+  return response.json();
+};
+
+export const getmyApartments = async ():Promise<ApartmentType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/my-apartments`, {
+    credentials: "include",
+  });
+  if(!response.ok){
+    throw new Error("Error fetching apartments");
   }
   return response.json();
 };
