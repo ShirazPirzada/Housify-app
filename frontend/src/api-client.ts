@@ -1,6 +1,6 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { ApartmentType } from "../../backend/src/shared/types";
+import { ApartmentType, SearchReponse } from "../../backend/src/shared/types";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -104,8 +104,33 @@ export const updateMyApartmentById = async (apartmentFormData: FormData) => {
     }
   );
 
-  if(!response.ok){
-    throw new Error("Failed to update the apartment")
+  if (!response.ok) {
+    throw new Error("Failed to update the apartment");
+  }
+  return response.json();
+};
+
+export type SearchParams = {
+  destination?: string;
+  rentStartDate?: string;
+  rentEndDate?: string;
+  tenantCount?: string;
+  page?: string;
+};
+
+export const searchApartments = async (searchParams: SearchParams):Promise<SearchReponse> => {
+  const queryParams = new URLSearchParams();
+  queryParams.append("destination", searchParams.destination || "");
+  queryParams.append("rentStartDate", searchParams.rentStartDate || "");
+  queryParams.append("rentEndDate", searchParams.rentEndDate || "");
+  queryParams.append("tenantCount", searchParams.tenantCount || "");
+  queryParams.append("page", searchParams.page || "");
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/apartments/search?${queryParams}`
+  );
+  if (!response.ok) {
+    throw new Error("Error Fetching Apartments");
   }
   return response.json();
 };
