@@ -11,6 +11,7 @@ import AddApartment from "./pages/AddApartment";
 import { useAppContext } from "./contexts/AppContext";
 import MyApartments from "./pages/MyApartments";
 import EditApartment from "./pages/EditApartment";
+import Search from "./pages/Search";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -29,7 +30,7 @@ function App() {
           path="/search"
           element={
             <Layout>
-              <p>Search Page</p>
+             <Search/>
             </Layout>
           }
         />

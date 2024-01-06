@@ -4,10 +4,10 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
-import myApartmentRoutes from "./routes/apartments";
+import myApartmentRoutes from "./routes/my-apartments";
 import cookieParser from "cookie-parser";
 import path from "path";
-
+import apartmentRoutes from "./routes/apartments";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
@@ -34,6 +34,7 @@ app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/my-apartments", myApartmentRoutes);
+app.use("/api/apartments", apartmentRoutes);
 
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
