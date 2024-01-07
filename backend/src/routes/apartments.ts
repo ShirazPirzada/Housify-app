@@ -6,12 +6,13 @@ const router = express.Router();
 
 router.get("/search", async (req: Request, res: Response) => {
   try {
+    // console.log("Params: ",req.query);
     const query = constructSearchQuery(req.query);
 
     let sortOptions = {};
     switch (req.query.sortOption) {
-      case "Rating":
-        sortOptions = { Rating: -1 };
+      case "starRating":
+        sortOptions = { starRating: -1 };
         break;
       case "pricePerMonthAsc":
         sortOptions = { pricePerMonth: 1 };
@@ -81,10 +82,10 @@ const constructSearchQuery = (queryParams: any) => {
     };
   }
 
-  if (queryParams.Rating) {
+  if (queryParams.stars) {
     const starRatings = Array.isArray(queryParams.Rating)
       ? queryParams.Rating.map((star: string) => parseInt(star))
-      : parseInt(queryParams.Rating);
+      : parseInt(queryParams.stars);
 
     constructedQuery.Rating = { $in: starRatings };
   }

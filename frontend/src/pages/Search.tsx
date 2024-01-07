@@ -5,10 +5,17 @@ import { useState } from "react";
 import SearchResultCard from "../components/SearchResultsCard";
 import Pagination from "../components/Pagination";
 import RatingFilter from "../components/RatingFilter";
+import ApartmentTypeFilters from "../components/ApartmentTypesFilter";
+import FacilitiesFilter from "../components/FacilitiesFilter";
 const Search = () => {
   const search = useSearchContext();
   const [page, setPage] = useState<number>(1);
   const [selectedStars, setSelectedStars] = useState<string[]>([]);
+  const [selectedApartmentTypes, setSelectedApartmentTypes] = useState<
+    string[]
+  >([]);
+  const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
+  const [sortOption,setSortOption] = useState<string>("");
 
   const searchParams = {
     destination: search.destination,
@@ -16,6 +23,10 @@ const Search = () => {
     rentEndDate: search.rentEndDate.toISOString(),
     tenantCount: search.tenantCount.toString(),
     page: page.toString(),
+    stars: selectedStars,
+    types: selectedApartmentTypes,
+    facilities: selectedFacilities,
+    sortOption
   };
 
   const { data: apartmentData } = useQuery(
@@ -32,6 +43,28 @@ const Search = () => {
     );
   };
 
+  const handleApartmentTypeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const apartmentType = event.target.value;
+    setSelectedApartmentTypes((prev) =>
+      event.target.checked
+        ? [...prev, apartmentType]
+        : prev.filter((at) => at !== apartmentType)
+    );
+  };
+
+  const handleFacilitiyChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const facility = event.target.value;
+    setSelectedFacilities((prev) =>
+      event.target.checked
+        ? [...prev, facility]
+        : prev.filter((ft) => ft !== facility)
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
       <div className="rounded-lg border border-slate-300 p-5 h-fit sticky top-10">
@@ -41,6 +74,14 @@ const Search = () => {
             <RatingFilter
               selectedStars={selectedStars}
               onChange={handleStarsChange}
+            />
+            <ApartmentTypeFilters
+              selectedApartmentTypes={selectedApartmentTypes}
+              onChange={handleApartmentTypeChange}
+            />
+            <FacilitiesFilter
+              selectedFacilities={selectedFacilities}
+              onChange={handleFacilitiyChange}
             />
           </h3>
         </div>
@@ -52,6 +93,17 @@ const Search = () => {
             {search.destination ? ` in ${search.destination}` : ""}
           </span>
           {/* TODO SORT options */}
+          <select
+            value={sortOption}
+            onChange={(event) => setSortOption(event.target.value)}
+            className="p-2 border rounded-md"
+          >
+            <option value="">Sort By</option>
+            <option value="starRating">Star Rating</option>
+            <option value="pricePerMonthAsc">Price Per Month (low to high)</option>
+            <option value="pricePerMonthDesc">Price Per Month (high to low)</option>
+
+          </select>
         </div>
         {apartmentData?.data.map((apartment) => (
           <SearchResultCard apartment={apartment} />

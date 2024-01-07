@@ -118,7 +118,7 @@ export type SearchParams = {
   page?: string;
   facilities?: string[];
   types?: string[];
-  Rating?: string[];
+  stars?: string[];
   maxPrice?: string;
   sortOption?: string;
 };
@@ -139,8 +139,9 @@ export const searchApartments = async (
     queryParams.append("facilities", facility)
   );
   searchParams.types?.forEach((type) => queryParams.append("types", type));
-  searchParams.Rating?.forEach((rr) => queryParams.append("Rating", rr));
-
+  searchParams.stars?.forEach((star) => queryParams.append("stars", star));
+  
+  
   const response = await fetch(
     `${API_BASE_URL}/api/apartments/search?${queryParams}`
   );
