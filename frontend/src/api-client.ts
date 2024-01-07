@@ -1,7 +1,18 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { ApartmentType, SearchReponse } from "../../backend/src/shared/types";
+import { ApartmentType, SearchReponse, UserType } from "../../backend/src/shared/types";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
+export const fetchCurrentUser = async ():Promise<UserType> => {
+  const response = await fetch(`${API_BASE_URL}/api/users/me`, {
+    credentials: "include",
+  });
+  console.log("Response of fetchCurrentUser ",response);
+  if (!response.ok) {
+    throw new Error("Error Fetching User");
+  }
+  return response.json();
+};
 
 export const register = async (formData: RegisterFormData) => {
   const response = await fetch(`${API_BASE_URL}/api/users/register`, {
@@ -40,6 +51,7 @@ export const validateToken = async () => {
   const response = await fetch(`${API_BASE_URL}/api/auth/validate-token`, {
     credentials: "include",
   });
+  console.log("Response from validate token: ",response)
   if (!response.ok) {
     throw new Error("Token invalid");
   }

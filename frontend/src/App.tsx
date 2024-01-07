@@ -13,6 +13,7 @@ import MyApartments from "./pages/MyApartments";
 import EditApartment from "./pages/EditApartment";
 import Search from "./pages/Search";
 import DetailPage from "./pages/DetailPage";
+import Booking from "./pages/Booking";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -64,6 +65,16 @@ function App() {
 
         {isLoggedIn && (
           <>
+          <Route
+              path="/apartment/:apartmentId/booking"
+              element={
+                <Layout isSignInPage={false}>
+                  <Booking/>
+                </Layout>
+              }
+            />
+
+
             <Route
               path="/add-apartment"
               element={
