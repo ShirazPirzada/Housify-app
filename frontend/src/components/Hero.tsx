@@ -5,7 +5,7 @@ const Hero = () => {
                 <h1 className="text-5xl text-white font-bold">
                     Find your next stay
                 </h1>
-                <p className="text-2xl text-white">Search low prices on apartments for your future career...</p>
+                <p className="text-2xl text-white">Search low prices on apartments for your stay...</p>
             </div>
         </div>
     )

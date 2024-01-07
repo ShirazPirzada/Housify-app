@@ -49,7 +49,7 @@ function App() {
         <Route
           path="/register"
           element={
-            <Layout isSignInPage={false}>
+            <Layout isSignInPage={true}>
               <Register />
             </Layout>
           }

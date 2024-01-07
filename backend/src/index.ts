@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import apartmentRoutes from "./routes/apartments";
 import { v2 as cloudinary } from "cloudinary";
+import Model_CNIC, { NIC } from "./models/nadra-cnic-check";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -18,6 +19,8 @@ cloudinary.config({
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
 //.then(()=>console.log("Connected to db: ",process.env.MONGODB_CONNECTION_STRING));
+
+
 
 const app = express();
 app.use(cookieParser());

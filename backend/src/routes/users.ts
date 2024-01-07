@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import verifyToken from "../middleware/auth";
+import Model_CNIC from "../models/nadra-cnic-check";
 const { check, validationResult } = require("express-validator");
 const router = express.Router();
 
@@ -27,6 +28,7 @@ router.post(
     check("lastName", "LastName is required").isString(),
     check("email", "Email is required").isEmail(),
     check("CNIC", "CNIC is required").isString(),
+    check("userType", "User type is required").notEmpty().isString(),
     check("password", "Password with 6 or more characters required").isLength({
       min: 6,
     }),
@@ -41,6 +43,13 @@ router.post(
       let user = await User.findOne({
         email: req.body.email,
       });
+      let checkCnic = await Model_CNIC.findOne({
+        National_Identity_CardNumber: req.body.CNIC,
+      })
+
+      if(!checkCnic){
+        return res.status(400).json({ message: "Cnic does not exists in Nadra! Please get yourself registered at nadra!" });
+      }
 
       if (user) {
         return res.status(400).json({ message: "User already exists" });

@@ -5,6 +5,7 @@ export type UserType = {
   firstName: string;
   lastName: string;
   CNIC: string;
+  userType: string;
 };
 
 export type ApartmentType = {

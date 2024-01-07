@@ -43,7 +43,7 @@ router.post(
         secure: process.env.NODE_ENV === "proudction",
         maxAge: 86400000,
       });
-      res.status(200).json({ userId: user._id });
+      res.status(200).json({ userId: user._id,userType:user.userType });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Something went wrong" });
