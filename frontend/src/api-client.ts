@@ -116,15 +116,30 @@ export type SearchParams = {
   rentEndDate?: string;
   tenantCount?: string;
   page?: string;
+  facilities?: string[];
+  types?: string[];
+  Rating?: string[];
+  maxPrice?: string;
+  sortOption?: string;
 };
 
-export const searchApartments = async (searchParams: SearchParams):Promise<SearchReponse> => {
+export const searchApartments = async (
+  searchParams: SearchParams
+): Promise<SearchReponse> => {
   const queryParams = new URLSearchParams();
   queryParams.append("destination", searchParams.destination || "");
   queryParams.append("rentStartDate", searchParams.rentStartDate || "");
   queryParams.append("rentEndDate", searchParams.rentEndDate || "");
   queryParams.append("tenantCount", searchParams.tenantCount || "");
   queryParams.append("page", searchParams.page || "");
+
+  queryParams.append("maxPrice", searchParams.maxPrice || "");
+  queryParams.append("sortOption", searchParams.sortOption || "");
+  searchParams.facilities?.forEach((facility) =>
+    queryParams.append("facilities", facility)
+  );
+  searchParams.types?.forEach((type) => queryParams.append("types", type));
+  searchParams.Rating?.forEach((rr) => queryParams.append("Rating", rr));
 
   const response = await fetch(
     `${API_BASE_URL}/api/apartments/search?${queryParams}`
