@@ -140,13 +140,22 @@ export const searchApartments = async (
   );
   searchParams.types?.forEach((type) => queryParams.append("types", type));
   searchParams.stars?.forEach((star) => queryParams.append("stars", star));
-  
-  
+
   const response = await fetch(
     `${API_BASE_URL}/api/apartments/search?${queryParams}`
   );
   if (!response.ok) {
     throw new Error("Error Fetching Apartments");
   }
+  return response.json();
+};
+export const fetchApartmentById = async (
+  apartmentId: string
+): Promise<ApartmentType> => {
+  const response = await fetch(`${API_BASE_URL}/api/apartments/${apartmentId}`);
+  if (!response.ok) {
+    throw new Error("Error fetching Apartments");
+  }
+
   return response.json();
 };

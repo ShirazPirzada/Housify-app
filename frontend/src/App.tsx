@@ -12,6 +12,7 @@ import { useAppContext } from "./contexts/AppContext";
 import MyApartments from "./pages/MyApartments";
 import EditApartment from "./pages/EditApartment";
 import Search from "./pages/Search";
+import DetailPage from "./pages/DetailPage";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -21,7 +22,7 @@ function App() {
         <Route
           path="/"
           element={
-            <Layout>
+            <Layout isSignInPage={false}>
               <p>Home Page</p>
             </Layout>
           }
@@ -29,8 +30,17 @@ function App() {
         <Route
           path="/search"
           element={
-            <Layout>
-             <Search/>
+            <Layout isSignInPage={false}>
+              <Search />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/detail/:apartmentId"
+          element={
+            <Layout isSignInPage={false}>
+              <DetailPage />
             </Layout>
           }
         />
@@ -38,7 +48,7 @@ function App() {
         <Route
           path="/register"
           element={
-            <Layout>
+            <Layout isSignInPage={false}>
               <Register />
             </Layout>
           }
@@ -46,7 +56,7 @@ function App() {
         <Route
           path="/sign-in"
           element={
-            <Layout>
+            <Layout isSignInPage={true}>
               <SignIn />
             </Layout>
           }
@@ -57,23 +67,23 @@ function App() {
             <Route
               path="/add-apartment"
               element={
-                <Layout>
+                <Layout isSignInPage={false}>
                   <AddApartment></AddApartment>
                 </Layout>
               }
             />
-              <Route
+            <Route
               path="/my-apartments"
               element={
-                <Layout>
+                <Layout isSignInPage={false}>
                   <MyApartments></MyApartments>
                 </Layout>
               }
             />
-             <Route
+            <Route
               path="/edit-apartment/:apartmentId"
               element={
-                <Layout>
+                <Layout isSignInPage={false}>
                   <EditApartment></EditApartment>
                 </Layout>
               }
