@@ -16,7 +16,7 @@ router.get("/me",verifyToken,async(req: Request, res: Response)=>{
     }
    res.json(user);
  } catch (error) {
-  console.log(error)
+  console.log("Backend user Error Fetch: ", error)
     res.status(500).json({message: "Something went wrong"})
  }
 })
@@ -35,6 +35,7 @@ router.post(
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
+    console.log("Registeration Error: ",errors);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
     }
@@ -61,7 +62,7 @@ router.post(
         { userId: user.id },
         process.env.JWT_SECRET_KEY as string,
         {
-          expiresIn: "7d",
+          expiresIn: "60d",
         }
       );
 
@@ -72,6 +73,7 @@ router.post(
       });
       return res.status(200).send({ message: "User registered OK" });
     } catch (error) {
+      
       res.status(500).send({ message: "Something went wrong" });
     }
   }

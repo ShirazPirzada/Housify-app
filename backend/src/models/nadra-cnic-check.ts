@@ -19,7 +19,7 @@ export default Model_CNIC;
 // const dummyData: NIC[] = [
 //     {
       //Used
-//       National_Identity_CardNumber: "41234-5678901-2",
+//       National_Identity_CardNumber: "",
 //     },
 //     {
       
@@ -27,7 +27,7 @@ export default Model_CNIC;
 //     },
 //     {
       
-//       National_Identity_CardNumber: "45432-1098765-4",
+//       National_Identity_CardNumber: "",
 //     },
 //     {
       
