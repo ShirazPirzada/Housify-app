@@ -1,6 +1,8 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { ApartmentType, SearchReponse, UserType } from "../../backend/src/shared/types";
+import { ApartmentType, PaymentIntentResponse, SearchReponse, UserType } from "../../backend/src/shared/types";
+import { PaymentIntent } from "@stripe/stripe-js";
+import { BookingFormData } from "./forms/BookingForm/BookingForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export const fetchCurrentUser = async ():Promise<UserType> => {
@@ -170,4 +172,45 @@ export const fetchApartmentById = async (
   }
 
   return response.json();
+};
+
+export const createPaymentIntent = async (
+  apartmentId: string,
+  numberOfMonths: string
+): Promise<PaymentIntentResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/apartments/${apartmentId}/bookings/payment-intent`,
+    {
+      credentials: "include",
+      method: "POST",
+      body: JSON.stringify({ numberOfMonths }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error fetching payment intent");
+  }
+
+  return response.json();
+};
+
+export const createRoomBooking = async (formData: BookingFormData) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/apatments/${formData.apartmentId}/bookings`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(formData),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error booking apartment");
+  }
 };

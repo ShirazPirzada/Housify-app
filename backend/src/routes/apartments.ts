@@ -1,11 +1,12 @@
 import express, { Request, Response } from "express";
 import Apartment from "../models/apartment";
-import { SearchReponse } from "../shared/types";
+import { BookingType, SearchReponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
+import Stripe from "stripe";
+import verifyToken from "../middleware/auth";
 
+const stripe  = new Stripe(process.env.STRIPE_API_KEY as string);
 const router = express.Router();
-
-
 
 
 router.get("/search", async (req: Request, res: Response) => {
@@ -73,6 +74,93 @@ router.get(
     }
   }
 );
+
+router.post("/apartmentId/bookings/payment-intent",verifyToken,async(req:Request,res:Response)=>{
+  const { numberOfMonths } = req.body;
+  const apartmentId = req.params.hotelId;
+
+  const apartment = await Apartment.findById(apartmentId);
+  if (!apartment) {
+    return res.status(400).json({ message: "Apartment not found" });
+  }
+
+  const totalCost = apartment.pricePerMonth * numberOfMonths;
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: totalCost * 100,
+    currency: "inr",
+    metadata: {
+      apartmentId: apartmentId,
+      userId: req.userId,
+    },
+  });
+
+  if (!paymentIntent.client_secret) {
+    return res.status(500).json({ message: "Error creating payment intent" });
+  }
+
+  const response = {
+    paymentIntentId: paymentIntent.id,
+    clientSecret: paymentIntent.client_secret.toString(),
+    totalCost,
+  };
+
+  res.send(response);
+});
+
+router.post(
+  "/:apartmentId/bookings",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const paymentIntentId = req.body.paymentIntentId;
+
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        paymentIntentId as string
+      );
+
+      if (!paymentIntent) {
+        return res.status(400).json({ message: "payment intent not found" });
+      }
+
+      if (
+        paymentIntent.metadata.apartmentId !== req.params.apartmentId ||
+        paymentIntent.metadata.userId !== req.userId
+      ) {
+        return res.status(400).json({ message: "payment intent mismatch" });
+      }
+
+      if (paymentIntent.status !== "succeeded") {
+        return res.status(400).json({
+          message: `payment intent not succeeded. Status: ${paymentIntent.status}`,
+        });
+      }
+
+      const newBooking: BookingType = {
+        ...req.body,
+        userId: req.userId,
+      };
+
+      const apartment = await Apartment.findOneAndUpdate(
+        { _id: req.params.apartmentId },
+        {
+          $push: { bookings: newBooking },
+        }
+      );
+
+      if (!apartment) {
+        return res.status(400).json({ message: "apartment not found" });
+      }
+
+      await apartment.save();
+      res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "something went wrong" });
+    }
+  }
+);
+
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};
 
