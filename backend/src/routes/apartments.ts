@@ -75,16 +75,17 @@ router.get(
   }
 );
 
-router.post("/apartmentId/bookings/payment-intent",verifyToken,async(req:Request,res:Response)=>{
+router.post("/:apartmentId/bookings/payment-intent",verifyToken,async(req:Request,res:Response)=>{
+  console.log("Inside post call of 1st booking/payment-intent");
   const { numberOfMonths } = req.body;
-  const apartmentId = req.params.hotelId;
+  const apartmentId = req.params.apartmentId;
 
   const apartment = await Apartment.findById(apartmentId);
   if (!apartment) {
     return res.status(400).json({ message: "Apartment not found" });
   }
 
-  const totalCost = apartment.pricePerMonth * numberOfMonths;
+  const totalCost = (apartment.pricePerMonth * numberOfMonths) * .2;
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalCost * 100,
@@ -113,6 +114,7 @@ router.post(
   verifyToken,
   async (req: Request, res: Response) => {
     try {
+      console.log("Inside post call of 2nd booking");
       const paymentIntentId = req.body.paymentIntentId;
 
       const paymentIntent = await stripe.paymentIntents.retrieve(
@@ -140,14 +142,15 @@ router.post(
         ...req.body,
         userId: req.userId,
       };
-
+      console.log("New BookingData: ",newBooking);
       const apartment = await Apartment.findOneAndUpdate(
         { _id: req.params.apartmentId },
         {
           $push: { bookings: newBooking },
-        }
+        },
+        { new: true } // This ensures you get the updated document in the response
       );
-
+        console.log("Apartment Data: ",apartment);
       if (!apartment) {
         return res.status(400).json({ message: "apartment not found" });
       }

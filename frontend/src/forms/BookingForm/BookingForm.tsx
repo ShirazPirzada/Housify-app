@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
 import * as apiClient from "../../api-client";
 
-import { PaymentIntentResponse, UserType } from "../../../../backend/src/shared/types";
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import {  PaymentIntentResponse, UserType } from "../../../../backend/src/shared/types";
+import { CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
 import { useSearchContext } from "../../contexts/SearchContext";
 import { useParams } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
 import { useMutation } from "react-query";
 import { StripeCardElement } from "@stripe/stripe-js";
+// import { StripeCardElement } from "@stripe/stripe-js";
 type Props = {
   currentUser: UserType;
   paymentIntent: PaymentIntentResponse
@@ -38,7 +39,7 @@ const BookingForm = ({ currentUser,paymentIntent }: Props) => {
     apiClient.createRoomBooking,
     {
       onSuccess: () => {
-        showToast({ message: "Booking Saved!", type: "SUCCESS" });
+        showToast({ message: "Apartment Booking Saved!", type: "SUCCESS" });
       },
       onError: () => {
         showToast({ message: "Error saving booking", type: "ERROR" });
@@ -53,12 +54,11 @@ const BookingForm = ({ currentUser,paymentIntent }: Props) => {
     lastName: currentUser.lastName,
     email: currentUser.email,
     tenantCount: search.tenantCount,
-   
     rentStartDate: search.rentStartDate.toISOString(),
     rentEndDate: search.rentEndDate.toISOString(),
     apartmentId: apartmentId,
     totalCost: paymentIntent.totalCost,
-    paymentIntentId: paymentIntent.paymentIntentId,
+   paymentIntentId: paymentIntent.paymentIntentId,
   }});
 
   const onSubmit = async (formData: BookingFormData) => {
@@ -78,7 +78,7 @@ const BookingForm = ({ currentUser,paymentIntent }: Props) => {
   };
 
   return (
-    <form  onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5">
       <span className="text-3xl font-bold">Confirm Your Details</span>
       <div className="grid grid-cols-2 gap-6">
         <label className="text-gray-700 text-sm font-bold flex-1">
@@ -118,7 +118,7 @@ const BookingForm = ({ currentUser,paymentIntent }: Props) => {
 
         <div className="bg-blue-200 p-4 rounded-md">
           <div className="font-semibold text-lg">
-            Token Cost: Rs {paymentIntent.totalCost.toFixed(2)}
+            Token Cost: Rs {paymentIntent.totalCost}
           </div>
           <div className="text-xs">Includes taxes and charges</div>
         </div>

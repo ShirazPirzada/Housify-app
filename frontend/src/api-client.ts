@@ -199,7 +199,7 @@ export const createPaymentIntent = async (
 
 export const createRoomBooking = async (formData: BookingFormData) => {
   const response = await fetch(
-    `${API_BASE_URL}/api/apatments/${formData.apartmentId}/bookings`,
+    `${API_BASE_URL}/api/apartments/${formData.apartmentId}/bookings`,
     {
       method: "POST",
       headers: {

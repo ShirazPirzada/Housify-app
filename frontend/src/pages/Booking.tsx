@@ -35,8 +35,9 @@ const Booking = () => {
     {
       enabled: !!apartmentId && numberOfMonths > 0,
     }
+    
   );
-
+    console.log("PaymentIntentData: ",paymentIntentData);
   const { data: apartment } = useQuery(
     "fetchApartmentById",
     () => apiClient.fetchApartmentById(apartmentId as string),
@@ -52,6 +53,7 @@ const Booking = () => {
   );
 
   if (!apartment) {
+    console.log("Apartment not found in booking payment page: ")
     return <></>;
   }
 
@@ -65,7 +67,7 @@ const Booking = () => {
           numberOfMonths={numberOfMonths}
           apartment={apartment}
         />      
-        {currentUser && paymentIntentData && (
+        {currentUser  && paymentIntentData && (
           <Elements
             stripe={stripePromise}
             options={{
@@ -76,7 +78,7 @@ const Booking = () => {
               currentUser={currentUser}
               paymentIntent={paymentIntentData}
             />
-          </Elements>
+          //</Elements>
         )}
     </div>
   );
