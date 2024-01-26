@@ -214,3 +214,20 @@ export const createRoomBooking = async (formData: BookingFormData) => {
     throw new Error("Error booking apartment");
   }
 };
+export const getmyBookings = async (): Promise<ApartmentType[]> => {
+  console.log("Check apartments bookinsg");
+  try {
+    const response = await fetch(`http://localhost:3000/api/bookedapartments`, {
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    throw new Error("Unable to fetch bookings");
+  }
+};

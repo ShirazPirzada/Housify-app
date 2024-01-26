@@ -10,7 +10,7 @@ import path from "path";
 import apartmentRoutes from "./routes/apartments";
 import { v2 as cloudinary } from "cloudinary";
 import Model_CNIC, { NIC } from "./models/nadra-cnic-check";
-
+import bookingRoutes from "./routes/bookedapartments";
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -38,6 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/my-apartments", myApartmentRoutes);
 app.use("/api/apartments", apartmentRoutes);
+app.use("/api/bookedapartments", bookingRoutes);
 
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));

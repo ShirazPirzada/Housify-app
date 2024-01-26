@@ -14,6 +14,7 @@ import EditApartment from "./pages/EditApartment";
 import Search from "./pages/Search";
 import DetailPage from "./pages/DetailPage";
 import Booking from "./pages/Booking";
+import MyBookings from "./pages/MyBookings";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -88,6 +89,14 @@ function App() {
               element={
                 <Layout isSignInPage={false}>
                   <MyApartments></MyApartments>
+                </Layout>
+              }
+            />
+            <Route
+              path="/bookedapartments"
+              element={
+                <Layout isSignInPage={false}>
+                  <MyBookings></MyBookings>
                 </Layout>
               }
             />

@@ -22,14 +22,15 @@ const Header = () => {
         <span className="flex space-x-2">
           {isLoggedIn ? (
             <>
-            {userType === 'customer' && (
-              <Link
+            {/* {userType === 'customer' && (
+           
+            )} */}
+               <Link
                 className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
-                to="/my-bookings"
+                to="/bookedapartments"
               >
                 My Bookings
               </Link>
-            )}
             {userType === 'landlord' && (
               <Link
                 className="flex items-center text-white px-3 font-bold hover:bg-blue-600"

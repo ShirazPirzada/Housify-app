@@ -59,7 +59,7 @@ export default Model_CNIC;
 //     },
 //     {
       
-//       National_Identity_CardNumber: "48765-4321098-7",
+//       National_Identity_CardNumber: "",
 //     },
 //     {
      
