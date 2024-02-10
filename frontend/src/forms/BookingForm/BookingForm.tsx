@@ -1,17 +1,21 @@
 import { useForm } from "react-hook-form";
 import * as apiClient from "../../api-client";
 
-import {  PaymentIntentResponse, UserType } from "../../../../backend/src/shared/types";
-import { CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
+import {
+  PaymentIntentResponse,
+  UserType,
+} from "../../../../backend/src/shared/types";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useSearchContext } from "../../contexts/SearchContext";
 import { useParams } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
 import { useMutation } from "react-query";
 import { StripeCardElement } from "@stripe/stripe-js";
+import { useState } from "react";
 // import { StripeCardElement } from "@stripe/stripe-js";
 type Props = {
   currentUser: UserType;
-  paymentIntent: PaymentIntentResponse
+  paymentIntent: PaymentIntentResponse;
 };
 
 export type BookingFormData = {
@@ -19,14 +23,16 @@ export type BookingFormData = {
   lastName: string;
   email: string;
   tenantCount: number;
-  rentStartDate:string
+  rentStartDate: string;
   rentEndDate: string;
   apartmentId: string;
   paymentIntentId: string;
   totalCost: number;
 };
 
-const BookingForm = ({ currentUser,paymentIntent }: Props) => {
+const BookingForm = ({ currentUser, paymentIntent }: Props) => {
+  let [account, setAccount] = useState("");
+  let [contractData, setContractData] = useState("");
 
   const stripe = useStripe();
   const elements = useElements();
@@ -47,19 +53,19 @@ const BookingForm = ({ currentUser,paymentIntent }: Props) => {
     }
   );
 
-
-
-  const { handleSubmit, register } = useForm<BookingFormData>({defaultValues:{
-    firstName: currentUser.firstName,
-    lastName: currentUser.lastName,
-    email: currentUser.email,
-    tenantCount: search.tenantCount,
-    rentStartDate: search.rentStartDate.toISOString(),
-    rentEndDate: search.rentEndDate.toISOString(),
-    apartmentId: apartmentId,
-    totalCost: paymentIntent.totalCost,
-   paymentIntentId: paymentIntent.paymentIntentId,
-  }});
+  const { handleSubmit, register } = useForm<BookingFormData>({
+    defaultValues: {
+      firstName: currentUser.firstName,
+      lastName: currentUser.lastName,
+      email: currentUser.email,
+      tenantCount: search.tenantCount,
+      rentStartDate: search.rentStartDate.toISOString(),
+      rentEndDate: search.rentEndDate.toISOString(),
+      apartmentId: apartmentId,
+      totalCost: paymentIntent.totalCost,
+      paymentIntentId: paymentIntent.paymentIntentId,
+    },
+  });
 
   const onSubmit = async (formData: BookingFormData) => {
     if (!stripe || !elements) {
@@ -76,9 +82,33 @@ const BookingForm = ({ currentUser,paymentIntent }: Props) => {
       bookRoom({ ...formData, paymentIntentId: result.paymentIntent.id });
     }
   };
+  const { ethereum } = window;
+  const connectMetaMask = async () => {
+    if (typeof window.ethereum !== "undefined") {
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
 
+      setAccount(accounts[0]);
+    } else {
+      alert("Install MetaMask Extension");
+    }
+
+    return;
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5"
+    >
+      <div>
+        <button
+          onClick={connectMetaMask}
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        >
+          Connect your Wallet
+        </button>
+      </div>
       <span className="text-3xl font-bold">Confirm Your Details</span>
       <div className="grid grid-cols-2 gap-6">
         <label className="text-gray-700 text-sm font-bold flex-1">
@@ -124,8 +154,8 @@ const BookingForm = ({ currentUser,paymentIntent }: Props) => {
         </div>
       </div>
 
-    {/* CC here */}
-    <div className="space-y-2">
+      {/* CC here */}
+      <div className="space-y-2">
         <h3 className="text-xl font-semibold"> Payment Details</h3>
         <CardElement
           id="payment-element"
