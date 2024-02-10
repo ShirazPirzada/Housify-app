@@ -79,11 +79,11 @@ export default Model_CNIC;
 //     },
 //     {
       
-//       National_Identity_CardNumber: "41098-7654321-0",
+//       National_Identity_CardNumber: "",
 //     },
 //     {
       
-//       National_Identity_CardNumber: "45432-1098765-4",
+//       National_Identity_CardNumber: "",
 //     },
 //     {
 //       // Use mongoose.Types.ObjectId for _id

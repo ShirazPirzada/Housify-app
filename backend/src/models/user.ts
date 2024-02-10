@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
     firstName: {type: String,required:true},
     lastName: {type: String,required:true},
     CNIC: {type: String,required:true,unique:true},
-    userType: {type:String,required:true}
+    userType: {type:String,required:true},
+    userReligion: {type:String,required:true}
 });
 
 //This is middleware for mongodb

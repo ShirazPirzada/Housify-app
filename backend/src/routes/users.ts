@@ -29,6 +29,7 @@ router.post(
     check("email", "Email is required").isEmail(),
     check("CNIC", "CNIC is required").isString(),
     check("userType", "User type is required").notEmpty().isString(),
+    check("userReligion", "Religion is required").notEmpty().isString(),
     check("password", "Password with 6 or more characters required").isLength({
       min: 6,
     }),

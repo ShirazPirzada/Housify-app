@@ -9,6 +9,7 @@ export type RegisterFormData = {
   email: string;
   CNIC: string;
   userType:string;
+  userReligion:string;
   password: string;
   confirmPassword: string;
 };
@@ -101,6 +102,21 @@ const Register = () => {
         )}
       </label>
 
+      <label className="text-gray-700 text-sm font-bold flex-1">
+        Religion
+        <select
+          className="border rounded w-full py-1 px-2 font-normal"
+          {...register("userReligion", { required: "Religion is Required" })}
+        >
+          <option value="">Select Religion</option>
+          <option value="Islam">Islam</option>
+          <option value="Hindi">Hindu</option>
+          <option value="Christanity">Christanity</option>
+        </select>
+        {errors.userReligion && (
+          <span className="text-red-500">{errors.userReligion.message}</span>
+        )}
+      </label>
       <label className="text-gray-700 text-sm font-bold flex-1">
         Password
         <input
