@@ -76,7 +76,7 @@ router.get(
 );
 
 router.post("/:apartmentId/bookings/payment-intent",verifyToken,async(req:Request,res:Response)=>{
-  console.log("Inside post call of 1st booking/payment-intent");
+ 
   const { numberOfMonths } = req.body;
   const apartmentId = req.params.apartmentId;
 
@@ -114,7 +114,7 @@ router.post(
   verifyToken,
   async (req: Request, res: Response) => {
     try {
-      console.log("Inside post call of 2nd booking");
+     
       const paymentIntentId = req.body.paymentIntentId;
 
       const paymentIntent = await stripe.paymentIntents.retrieve(
@@ -142,7 +142,7 @@ router.post(
         ...req.body,
         userId: req.userId,
       };
-      console.log("New BookingData: ",newBooking);
+    
       const apartment = await Apartment.findOneAndUpdate(
         { _id: req.params.apartmentId },
         {

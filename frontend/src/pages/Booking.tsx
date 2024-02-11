@@ -37,7 +37,7 @@ const Booking = () => {
     }
     
   );
-    console.log("PaymentIntentData: ",paymentIntentData);
+   
   const { data: apartment } = useQuery(
     "fetchApartmentById",
     () => apiClient.fetchApartmentById(apartmentId as string),
@@ -53,7 +53,7 @@ const Booking = () => {
   );
 
   if (!apartment) {
-    console.log("Apartment not found in booking payment page: ")
+    
     return <></>;
   }
 

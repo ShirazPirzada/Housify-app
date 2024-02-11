@@ -9,7 +9,7 @@ export const fetchCurrentUser = async ():Promise<UserType> => {
   const response = await fetch(`${API_BASE_URL}/api/users/me`, {
     credentials: "include",
   });
-  console.log("Response of fetchCurrentUser ",response);
+  
   if (!response.ok) {
     throw new Error("Error Fetching User");
   }
@@ -53,7 +53,7 @@ export const validateToken = async () => {
   const response = await fetch(`${API_BASE_URL}/api/auth/validate-token`, {
     credentials: "include",
   });
-  console.log("Response from validate token: ",response)
+  
   if (!response.ok) {
     throw new Error("Token invalid");
   }
@@ -215,7 +215,7 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   }
 };
 export const getmyBookings = async (): Promise<ApartmentType[]> => {
-  console.log("Check apartments bookinsg");
+  
   try {
     const response = await fetch(`http://localhost:3000/api/bookedapartments`, {
       credentials: "include",
@@ -227,7 +227,7 @@ export const getmyBookings = async (): Promise<ApartmentType[]> => {
 
     return response.json();
   } catch (error) {
-    console.error("Error fetching bookings:", error);
+   
     throw new Error("Unable to fetch bookings");
   }
 };

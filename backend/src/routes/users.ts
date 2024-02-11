@@ -36,7 +36,7 @@ router.post(
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
-    console.log("Registeration Error: ",errors);
+ 
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
     }

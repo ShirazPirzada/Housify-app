@@ -7,7 +7,7 @@ const router = express.Router();
 
 // /api/my-bookings
 router.get("/", verifyToken, async (req: Request, res: Response) => {
-    console.log("Apartment api...")
+    
   try {
         const apartment = await Apartment.find({
       bookings: { $elemMatch: { userId: req.userId } },
