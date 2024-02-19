@@ -78,7 +78,7 @@ const Booking = () => {
               currentUser={currentUser}
               paymentIntent={paymentIntentData}
             />
-          //</Elements>
+          </Elements>
         )}
     </div>
   );

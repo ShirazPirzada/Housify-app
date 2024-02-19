@@ -344,8 +344,7 @@ var ethAmountInString = ethAmountInWei.toString();
     }
   };
 
-  
-  // Logic for confirming booking here
+
 
   return(
     <div>
@@ -372,7 +371,7 @@ var ethAmountInString = ethAmountInWei.toString();
         <p className="text-red-500">Insufficient balance to make this rent.</p>
       )}
     </div>
-  ); // Placeholder return value as this component doesn't render anything
+  ); 
 };
 
 export default ConfirmBookingComponent;
