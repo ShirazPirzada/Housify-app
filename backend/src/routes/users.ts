@@ -21,6 +21,19 @@ router.get("/me",verifyToken,async(req: Request, res: Response)=>{
  }
 })
 
+router.get("/:id", async (req: Request, res: Response) => {
+  const id = req.params.id.toString();
+  try {
+    const userData = await User.findOne({
+      _id: id
+    });
+    res.json(userData);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching User" });
+  }
+});
+
+
 router.post(
   "/register",
   [

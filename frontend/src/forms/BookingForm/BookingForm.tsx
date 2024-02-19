@@ -13,9 +13,8 @@ import { useParams } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
 import { useMutation } from "react-query";
 import { StripeCardElement } from "@stripe/stripe-js";
-import { useState } from "react";
-// import { ethers } from "ethers"; // Import ethers library here
-import * as ethers from "ethers";
+
+import ConfirmBookingComponent from "../../components/ConfrimCryptoBooking";
 // import { StripeCardElement } from "@stripe/stripe-js";
 type Props = {
   currentUser: UserType;
@@ -35,10 +34,7 @@ export type BookingFormData = {
 };
 
 const BookingForm = ({ currentUser, paymentIntent }: Props) => {
-  let [account, setAccount] = useState("");
-  // let [contractData, setContractData] = useState("");
-  let [walletConnected, setWalletConnected] = useState(false);
-  let [insufficientBalance, setInsufficientBalance] = useState(false);
+
   const stripe = useStripe();
   const elements = useElements();
   
@@ -72,6 +68,8 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     },
   });
 
+
+  
   const onSubmit = async (formData: BookingFormData) => {
     if (!stripe || !elements) {
       return;
@@ -87,309 +85,15 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
       bookRoom({ ...formData, paymentIntentId: result.paymentIntent.id });
     }
   };
-  // const { ethereum } = window;
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setAccount(accounts[0]);
-        setWalletConnected(true);
-      } catch (error) {
-        console.error("Error connecting wallet:", error);
-      }
-    } else {
-      alert("Please install MetaMask extension");
-    }
-  };
-
-  const confirmBooking = async () => {
-    if (!walletConnected) {
-      alert("Please connect your wallet first");
-      return;
-    }
-
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    const ContractAddress = "0x0F3063A7e4ae0BeAE2853F21b818E3D5F22881Ba";
-    const ABI = [
-      {
-        anonymous: false,
-        inputs: [
-          {
-            indexed: false,
-            internalType: "uint256",
-            name: "rentalId",
-            type: "uint256",
-          },
-          {
-            indexed: false,
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            indexed: false,
-            internalType: "address",
-            name: "landlord",
-            type: "address",
-          },
-          {
-            indexed: false,
-            internalType: "address",
-            name: "tenant",
-            type: "address",
-          },
-        ],
-        name: "ApartmentRented",
-        type: "event",
-      },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "_rentalId",
-            type: "uint256",
-          },
-        ],
-        name: "cancelRental",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "nextRentalId",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "_rentStartDate",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "_rentEndDate",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "_amount",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "_tenantWallet",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "_landlordWallet",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "_tenantName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "_landlordName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "_apartmentName",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "_apartmentId",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "_location",
-            type: "string",
-          },
-        ],
-        name: "rentApartment",
-        outputs: [],
-        stateMutability: "payable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        name: "rentals",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "rentStartDate",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "rentEndDate",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "tenantWallet",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "landlordWallet",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "tenantName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "landlordName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "apartmentName",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "apartmentId",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "location",
-            type: "string",
-          },
-          {
-            internalType: "bool",
-            name: "active",
-            type: "bool",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-    ];
-    const contract = new ethers.Contract(ContractAddress, ABI, signer);
-
-    const tenantBalance = await provider.getBalance(account);
-    const tenantBalanceEth = tenantBalance.toString();
-
-    // Example amount in Ether (Sepolia network)
-    const ethAmount = ethers.parseEther("0.0004");
-    // Compare tenant balance with ethAmount
-    if (parseFloat(tenantBalanceEth) >= ethAmount) {
-      console.log("Tenant has sufficient balance.");
-      
-    } else {
-      console.log("Tenant does not have sufficient balance.");
-      
-    }
-
-    console.log("Tenant Balance: ", tenantBalance);
-    if (parseFloat(tenantBalanceEth) < ethAmount) {
-      setInsufficientBalance(true);
-      return;
-    }
-
-    try {
-      //Test data
-
-      const rentStartDate = 1644710400; // Example start date (Unix timestamp)
-      const rentEndDate = 1647302400; // Example end date (Unix timestamp)
-      //const totalCost = ethers.parseEther("0.0004"); // Example total cost in sepolia eth (string)
-      const totalCostInWei = ethers.parseEther("0.0020"); // Convert 0.0020 Ether to wei
-      const tenantWalletAddress = "0x86A0EE2555bB7DA4C5774b289850963035132ce0";
-      // Example tenant's wallet address
-      const landlordWalletAddress =
-        "0x398021A6A8f8E189d328E3458030f6F150Cde3fc"; // Example landlord's wallet address
-      const tenantName = "John Doe"; // Example tenant's name
-      const landlordName = "Jane Smith"; // Example landlord's name
-      const apartmentName = "Apartment 123"; // Example apartment name
-      const apartmentId = 123; // Example apartment ID
-      const location = "New York"; // Example location
-
-      // const totalCostBigInt = BigInt(totalCost); // Convert totalCost to BigInt
-
-      const txResponse = await contract.rentApartment(
-        rentStartDate,
-        rentEndDate,
-        totalCostInWei,
-        tenantWalletAddress,
-        landlordWalletAddress,
-        tenantName,
-        landlordName,
-        apartmentName,
-        apartmentId,
-        location,
-        { value: totalCostInWei } // specify the value to send with the transaction
-
-      );
-      await txResponse.wait();
-      showToast({ message: "Apartment Booking Saved!", type: "SUCCESS" });
-    } catch (error) {
-      console.error("Error confirming booking:", error);
-      showToast({ message: "Error saving booking", type: "ERROR" });
-    }
-  };
-
+  
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5"
     >
       <div>
-        {/* Connect Wallet button */}
-        {!walletConnected && (
-          <button
-            onClick={connectWallet}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            Connect your Wallet
-          </button>
-        )}
-        {/* Confirm Booking button */}
-        {walletConnected && (
-          <button
-            onClick={confirmBooking}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            Confirm Booking
-          </button>
-        )}
-         {/* Insufficient balance message */}
-      {insufficientBalance && (
-        <p className="text-red-500">Insufficient balance to make this rent.</p>
-      )}
+       <ConfirmBookingComponent  currentUser={currentUser}
+              paymentIntent={paymentIntent} rentStartDate={search.rentStartDate} rentEndDate={search.rentEndDate}/>
       </div>
       <span className="text-3xl font-bold">Confirm Your Details</span>
       <div className="grid grid-cols-2 gap-6">

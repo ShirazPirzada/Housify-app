@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
-contract RentalAgreement {
+contract RentalSmartContract {
     struct Rental {
         uint256 rentStartDate;
         uint256 rentEndDate;
@@ -10,7 +10,7 @@ contract RentalAgreement {
         string tenantName;
         string landlordName; // Added landlord's name
         string apartmentName;
-        uint256 apartmentId;
+        string apartmentId;
         string location;
         bool active;
     }
@@ -34,7 +34,7 @@ contract RentalAgreement {
         string memory _tenantName,
         string memory _landlordName, // Added landlord's name as parameter
         string memory _apartmentName,
-        uint256 _apartmentId,
+        string memory _apartmentId,
         string memory _location
     ) external payable {
         require(msg.value == _amount, "Incorrect rent amount sent");

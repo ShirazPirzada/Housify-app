@@ -2,14 +2,14 @@ import express, { Request, Response } from "express";
 import verifyToken from "../middleware/auth";
 import { ApartmentType } from "../shared/types";
 import Apartment from "../models/apartment";
+import { param } from "express-validator";
 
 const router = express.Router();
 
 // /api/my-bookings
 router.get("/", verifyToken, async (req: Request, res: Response) => {
-    
   try {
-        const apartment = await Apartment.find({
+    const apartment = await Apartment.find({
       bookings: { $elemMatch: { userId: req.userId } },
     });
 
@@ -30,6 +30,22 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Unable to fetch bookings" });
+  }
+});
+
+router.get("/:id",[param("id").notEmpty().withMessage("Apartment ID is required")], verifyToken, async (req: Request, res: Response) => {
+  const id = req.params.id.toString();
+  try {
+    const apartment = await Apartment.findOne({
+      _id: id,
+    });
+
+   
+    console.log("Request being sent from BookedApartments: ",apartment);
+    res.status(200).send(apartment);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Unable to fetch apartment" });
   }
 });
 
