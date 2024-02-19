@@ -31,6 +31,7 @@ export type BookingFormData = {
   apartmentId: string;
   paymentIntentId: string;
   totalCost: number;
+  PaymentType: string;
 };
 
 const BookingForm = ({ currentUser, paymentIntent }: Props) => {
@@ -53,7 +54,13 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     }
   );
 
-  const { handleSubmit, register } = useForm<BookingFormData>({
+const [cryptoMsg,setCryptoMsg] = useState("Test");
+function handleCallBackMsg(cryptoMsg){
+  setCryptoMsg(cryptoMsg);
+}
+const [paymentMethod, setPaymentMethod] = useState<"crypto" | "card">("crypto");
+
+  const { handleSubmit, register ,watch} = useForm<BookingFormData>({
     defaultValues: {
       firstName: currentUser.firstName,
       lastName: currentUser.lastName,
@@ -64,15 +71,18 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
       apartmentId: apartmentId,
       totalCost: paymentIntent.totalCost,
       paymentIntentId: paymentIntent.paymentIntentId,
+      PaymentType:paymentMethod
     },
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<"crypto" | "card">("card");
 
   const handlePaymentMethodChange = (method: "crypto" | "card") => {
     setPaymentMethod(method);
   };
   const onSubmit = async (formData: BookingFormData) => {
+    if(paymentMethod==="card"){
+      formData.PaymentType=paymentMethod;
+    }
     if (!stripe || !elements) {
       return;
     }
@@ -87,6 +97,8 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
       bookRoom({ ...formData, paymentIntentId: result.paymentIntent.id });
     }
   };
+
+  const formData = watch(); // Access form data using watch
 
   return (
     <form
@@ -112,8 +124,7 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
             Crypto Payment
           </button>
         </div>
-        {paymentMethod === "card" && (
-          <div>
+        <div>
             <span className="text-3xl font-bold">Confirm Your Details</span>
             <div className="grid grid-cols-2 gap-6">
               <label className="text-gray-700 text-sm font-bold flex-1">
@@ -156,34 +167,35 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
                 <div className="text-xs">Includes taxes and charges</div>
               </div>
             </div>
-            {/* CC here */}
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold"> Payment Details</h3>
-              <CardElement
-                id="payment-element"
-                className="border rounded-md p-2 text-sm"
-              />
-            </div>
-            <br></br>
-            <div className="flex justify-end">
-              <button
-                disabled={isLoading}
-                type="submit"
-                className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-md disabled:bg-gray-500"
-              >
-                {isLoading ? "Saving..." : "Confirm Booking"}
-              </button>
-            </div>
-          </div>
-        )}
-        {paymentMethod === "crypto" && (
-          <ConfirmBookingComponent
+          {paymentMethod==="crypto" && (
+            <ConfirmBookingComponent
             currentUser={currentUser}
             paymentIntent={paymentIntent}
             rentStartDate={search.rentStartDate}
             rentEndDate={search.rentEndDate}
+            handleCallBackMsg={handleCallBackMsg}
+            formData={formData}
           />
-        )}
+          )}
+          {paymentMethod==="card" &&(
+            <><div className="space-y-2">
+              <h3 className="text-xl font-semibold"> Payment Details</h3>
+              <CardElement
+                id="payment-element"
+                className="border rounded-md p-2 text-sm" />
+            </div><br></br><div className="flex justify-end">
+                <button
+                  disabled={isLoading}
+                  type="submit"
+                  className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-md disabled:bg-gray-500"
+                >
+                  {isLoading ? "Saving..." : "Confirm Booking"}
+                </button>
+              </div></>
+          )}
+            
+          </div>
+      
       </div>
     </form>
   );

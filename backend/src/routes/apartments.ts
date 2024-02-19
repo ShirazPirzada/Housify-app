@@ -123,30 +123,35 @@ router.post(
   verifyToken,
   async (req: Request, res: Response) => {
     try {
-     
+   
       const paymentIntentId = req.body.paymentIntentId;
-
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        paymentIntentId as string
-      );
-
-      if (!paymentIntent) {
-        return res.status(400).json({ message: "payment intent not found" });
+      const paymentType = req.body.PaymentType;
+      if(paymentType==="crypto"){
+    
+      }else{
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId as string
+        );
+  
+        if (!paymentIntent) {
+          return res.status(400).json({ message: "payment intent not found" });
+        }
+  
+        if (
+          paymentIntent.metadata.apartmentId !== req.params.apartmentId ||
+          paymentIntent.metadata.userId !== req.userId
+        ) {
+          return res.status(400).json({ message: "payment intent mismatch" });
+        }
+  
+        if (paymentIntent.status !== "succeeded") {
+          return res.status(400).json({
+            message: `payment intent not succeeded. Status: ${paymentIntent.status}`,
+          });
+        }
       }
-
-      if (
-        paymentIntent.metadata.apartmentId !== req.params.apartmentId ||
-        paymentIntent.metadata.userId !== req.userId
-      ) {
-        return res.status(400).json({ message: "payment intent mismatch" });
-      }
-
-      if (paymentIntent.status !== "succeeded") {
-        return res.status(400).json({
-          message: `payment intent not succeeded. Status: ${paymentIntent.status}`,
-        });
-      }
-
+      
+      
       const newBooking: BookingType = {
         ...req.body,
         userId: req.userId,
@@ -159,7 +164,7 @@ router.post(
         },
         { new: true } // This ensures you get the updated document in the response
       );
-        console.log("Apartment Data: ",apartment);
+     
       if (!apartment) {
         return res.status(400).json({ message: "apartment not found" });
       }

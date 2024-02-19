@@ -40,8 +40,6 @@ router.get("/:id",[param("id").notEmpty().withMessage("Apartment ID is required"
       _id: id,
     });
 
-   
-    console.log("Request being sent from BookedApartments: ",apartment);
     res.status(200).send(apartment);
   } catch (error) {
     console.log(error);
