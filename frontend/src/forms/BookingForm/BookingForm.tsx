@@ -110,7 +110,6 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
             }`}
           >
             Crypto Payment
-
           </button>
         </div>
         {paymentMethod === "card" && (
@@ -177,10 +176,14 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
             </div>
           </div>
         )}
-         <ConfirmBookingComponent  currentUser={currentUser}
-              paymentIntent={paymentIntent}
-              rentStartDate={search.rentStartDate}
-              rentEndDate={search.rentEndDate}/>
+        {paymentMethod === "crypto" && (
+          <ConfirmBookingComponent
+            currentUser={currentUser}
+            paymentIntent={paymentIntent}
+            rentStartDate={search.rentStartDate}
+            rentEndDate={search.rentEndDate}
+          />
+        )}
       </div>
     </form>
   );
