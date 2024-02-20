@@ -9,6 +9,8 @@ import { useParams } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import { useMutation } from "react-query";
 import { BookingFormData } from "../forms/BookingForm/BookingForm";
+import ETHLIVEPRICE from './ETHLIVEPRICE'; // Import the fetchETHPrice function
+
 type Props = {
   currentUser: UserType;
   paymentIntent: PaymentIntentResponse;
@@ -22,7 +24,6 @@ const ConfirmBookingComponent = ({
   paymentIntent,
   rentStartDate,
   rentEndDate,
-  handleCallBackMsg,
   formData,
 }: Props) => {
   console.log("FORM DATA: ", formData);
@@ -38,7 +39,17 @@ const ConfirmBookingComponent = ({
   const [landLordName, setLandLordName] = useState("");
   const _rentStartDatenew = rentStartDate;
   const _rentEndDatenew = rentEndDate;
+  const [Liveprice, setLivePrice] = useState(0);
+  const apiKey = 'CG-GJtQCf5gVtoSZyRtVnY6Do9R	'; // Replace 'YOUR_API_KEY' with your actual API key
+
   useEffect(() => {
+
+    const getPrice = async () => {
+      const ethPrice = await ETHLIVEPRICE(apiKey);
+      setLivePrice(ethPrice);
+    };
+    getPrice();
+
     const fetchApartmentData = async () => {
       try {
         const apartmentDataFromApi = await apiClient.getApartmentById(
@@ -70,8 +81,7 @@ const ConfirmBookingComponent = ({
     if (!!landLordId) {
       fetchLandLordData();
     }
-  }, [apartmentId, landLordId]);
-
+  }, [apartmentId, landLordId,apiKey]);
   const { mutate: bookRoom } = useMutation(
     apiClient.createRoomBooking,
     {
@@ -302,25 +312,17 @@ const ConfirmBookingComponent = ({
     const tenantBalance = await provider.getBalance(account);
     const tenantBalanceEth = tenantBalance.toString();
 
+    
     // Convert PKR amount to ETH
     const pkrAmount = paymentIntent.totalCost; // Amount in PKR
-    const exchangeRate = 806999; // Hypothetical exchange rate: 1 ETH = 806,998.96 INR
+    const exchangeRate = Liveprice; // Hypothetical exchange rate: 1 ETH = 806,998.96 INR
     const ethAmount = pkrAmount / exchangeRate; // Equivalent amount in ETH
 
     // Convert ETH amount to Wei
     const ethAmountInWei = ethers.parseEther(ethAmount.toString());
     var ethAmountInString = ethAmountInWei.toString();
 
-    // Example amount in Ether (Sepolia network)
-    // const ethAmount = ethers.parseEther("0.0004");
-    // Compare tenant balance with ethAmount
-    if (parseFloat(tenantBalanceEth) >= parseFloat(ethAmountInString)) {
-      console.log("Tenant has sufficient balance.");
-    } else {
-      console.log("Tenant does not have sufficient balance.");
-    }
 
-    console.log("Tenant Balance: ", tenantBalance);
     if (parseFloat(tenantBalanceEth) < parseFloat(ethAmountInString)) {
       setInsufficientBalance(true);
       return;
@@ -347,7 +349,6 @@ const ConfirmBookingComponent = ({
       const apartmentId = _aptId; // Example apartment ID
       const location = _location; // Example location
 
-      // const totalCostBigInt = BigInt(totalCost); // Convert totalCost to BigInt
 
       const txResponse = await contract.rentApartment(
         rentStartDate,
