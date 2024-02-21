@@ -3,36 +3,37 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 import verifyToken from "../middleware/auth";
 import Model_CNIC from "../models/nadra-cnic-check";
+import { UserType } from "../shared/types";
+import bcrypt from "bcryptjs";
 const { check, validationResult } = require("express-validator");
 const router = express.Router();
 
-router.get("/me",verifyToken,async(req: Request, res: Response)=>{
- const userId = req.userId;
- try {
+router.get("/me", verifyToken, async (req: Request, res: Response) => {
+  const userId = req.userId;
+  try {
     const user = await User.findById(userId).select("-password");
-  
-    if(!user){
-      return res.status(400).json({message:"User not found"});
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
     }
-   res.json(user);
- } catch (error) {
-  console.log("Backend user Error Fetch: ", error)
-    res.status(500).json({message: "Something went wrong"})
- }
-})
+    res.json(user);
+  } catch (error) {
+    console.log("Backend user Error Fetch: ", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
 
 router.get("/:id", async (req: Request, res: Response) => {
   const id = req.params.id.toString();
   try {
     const userData = await User.findOne({
-      _id: id
+      _id: id,
     });
     res.json(userData);
   } catch (error) {
     res.status(500).json({ message: "Error fetching User" });
   }
 });
-
 
 router.post(
   "/register",
@@ -49,7 +50,7 @@ router.post(
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
- 
+
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
     }
@@ -60,10 +61,15 @@ router.post(
       });
       let checkCnic = await Model_CNIC.findOne({
         National_Identity_CardNumber: req.body.CNIC,
-      })
+      });
 
-      if(!checkCnic){
-        return res.status(400).json({ message: "Cnic does not exists in Nadra! Please get yourself registered at nadra!" });
+      if (!checkCnic) {
+        return res
+          .status(400)
+          .json({
+            message:
+              "Cnic does not exists in Nadra! Please get yourself registered at nadra!",
+          });
       }
 
       if (user) {
@@ -76,7 +82,7 @@ router.post(
         { userId: user.id },
         process.env.JWT_SECRET_KEY as string,
         {
-          expiresIn: "60d",
+          expiresIn: "3d",
         }
       );
 
@@ -87,9 +93,40 @@ router.post(
       });
       return res.status(200).send({ message: "User registered OK" });
     } catch (error) {
-      
       res.status(500).send({ message: "Something went wrong" });
     }
   }
 );
+
+//update profile route
+router.put("/:userId", async (req: Request, res: Response) => {
+  try {
+    // Check if password is provided
+  
+    const { password, ...updatedUserWithoutPassword } = req.body;
+    
+    // If password is provided, hash it
+    if (password) {
+      req.body.password = await bcrypt.hash(password, 8);
+    }
+    const updatedUser: UserType = req.body;
+    const user = await User.findOneAndUpdate(
+      {
+        _id: req.params.userId,
+      },
+      password ? req.body : updatedUserWithoutPassword, // Update accordingly
+      { new: true }
+    );
+   
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User Profile could not be updated" });
+    }
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 export default router;

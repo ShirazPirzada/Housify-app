@@ -1,7 +1,6 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
 import { ApartmentType, PaymentIntentResponse, SearchReponse, UserType } from "../../backend/src/shared/types";
-import { PaymentIntent } from "@stripe/stripe-js";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -31,6 +30,7 @@ export const register = async (formData: RegisterFormData) => {
     throw new Error(responseBody.message);
   }
 };
+
 
 export const signIn = async (formData: SignInFormData) => {
   const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
@@ -124,6 +124,41 @@ export const fetchUserById = async (
   return response.json();
 };
 
+//Update user profile 
+export const updateProfile = async (userFormData: FormData) => {
+  
+  const userId = userFormData.get("userId");
+  const firstName = userFormData.get("firstName");
+  const lastName = userFormData.get("lastName");
+  const email = userFormData.get("email");
+  const userReligion = userFormData.get("userReligion");
+  const password = userFormData.get("password");
+  const requestBody = {
+    userId,
+    firstName,
+    lastName,
+    email,
+    userReligion,
+    password,
+  };
+  const response = await fetch(
+    `${API_BASE_URL}/api/users/${userId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update the user profile");
+  }
+  return response.json();
+
+};
 
 
 export const updateMyApartmentById = async (apartmentFormData: FormData) => {

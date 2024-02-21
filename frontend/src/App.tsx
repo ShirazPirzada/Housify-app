@@ -15,6 +15,7 @@ import Search from "./pages/Search";
 import DetailPage from "./pages/DetailPage";
 import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
+import Profile from "./pages/Profile";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -46,7 +47,14 @@ function App() {
             </Layout>
           }
         />
-
+        <Route
+          path="/updateProfile"
+          element={
+            <Layout isSignInPage={false}>
+              <Profile />
+            </Layout>
+          }
+        />
         <Route
           path="/register"
           element={
@@ -66,15 +74,14 @@ function App() {
 
         {isLoggedIn && (
           <>
-          <Route
+            <Route
               path="/apartment/:apartmentId/booking"
               element={
                 <Layout isSignInPage={false}>
-                  <Booking/>
+                  <Booking />
                 </Layout>
               }
             />
-
 
             <Route
               path="/add-apartment"
