@@ -89,7 +89,7 @@ const Profile = () => {
       ) : (
         <>
           <div>
-            <h1 className="text-3xl font-bold">Profile</h1>
+            <h1 className="text-3xl font-bold">Profile - Update</h1><br></br>
           </div>
           <FormProvider {...formMethods}>
             <form className="flex flex-col gap-5" onSubmit={onSubmit}>
