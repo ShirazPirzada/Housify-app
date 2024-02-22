@@ -1,16 +1,26 @@
 import { Link } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import SignOutButton from "./SIgnOutButton";
-import { useQuery } from "react-query";
 import * as apiClient from "../api-client"
+import { useEffect, useState } from "react";
+import { UserType } from "../../../backend/src/shared/types";
 const Header = () => {
   const { isLoggedIn } = useAppContext();
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null); // Define currentUser state
 
-  const { data: currentUser } = useQuery(
-    "fetchCurrentUser",
-    apiClient.fetchCurrentUser
-  );
-
+ 
+useEffect(()=>{
+  const fetchData = async () => {
+    try {
+      const data = await apiClient.fetchCurrentUser();
+      setCurrentUser(data); // Update currentUser state here
+      
+    } catch (error) {
+      
+    }
+  };
+  fetchData();
+},[])
   const userType = currentUser?.userType;
 
   return (
