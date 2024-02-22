@@ -9,19 +9,28 @@ const Header = () => {
   const [currentUser, setCurrentUser] = useState<UserType | null>(null); // Define currentUser state
 
  
-useEffect(()=>{
-  const fetchData = async () => {
-    try {
-      const data = await apiClient.fetchCurrentUser();
-      setCurrentUser(data); // Update currentUser state here
-      
-    } catch (error) {
-      
+  useEffect(() => {
+    // Define fetchData function
+    const fetchData = async () => {
+      try {
+        const data = await apiClient.fetchCurrentUser();
+        setCurrentUser(data); // Update currentUser state here
+      } catch (error) {
+        // Handle errors if needed
+      }
+    };
+  
+    // Run fetchData only when the user is logged in
+    if (isLoggedIn) {
+      fetchData();
     }
-  };
-  fetchData();
-},[])
-  const userType = currentUser?.userType;
+  
+  }, [isLoggedIn]); // Run effect when isLoggedIn changes
+  let userType:any ;
+  
+  if(isLoggedIn){
+   userType= currentUser?.userType;
+  }
 
   return (
     <div className="bg-blue-800 py-6">

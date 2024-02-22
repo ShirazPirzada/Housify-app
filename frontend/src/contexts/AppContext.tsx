@@ -29,16 +29,23 @@ export const AppContextProvider = ({children}:{
 })=>{
     const [toast,setToast] = useState<ToastMessage | undefined>(undefined);
     
-    const {isError}=useQuery("validateToken",apiClient.validateToken,{
+    const {data, isError} = useQuery("validateToken",apiClient.validateToken,{
         retry:false,
-    })
-    
+    });
+   
+    // Determine isLoggedIn based on the data and isError
+    const _isLoggedIn = !isError && !!data && !data.error;
+
+      // Show loading state if data is not available yet
+      if (data === undefined) {
+        return <div>Loading...</div>;
+    }
     return (
         <AppContext.Provider value={{
             showToast: (toastMessage) => {
                setToast(toastMessage);
             },
-            isLoggedIn: !isError,
+            isLoggedIn: _isLoggedIn,
             stripePromise
         }}>
             {toast && (<Toast message={toast.message} type={toast.type} onClose={()=>setToast(undefined)}/>)}

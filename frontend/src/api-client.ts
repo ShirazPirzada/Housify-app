@@ -3,16 +3,48 @@ import { SignInFormData } from "./pages/SignIn";
 import { ApartmentType, PaymentIntentResponse, SearchReponse, UserType } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+export const validateToken = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/validate-token`, {
+      credentials: "include",
+    });
 
-export const fetchCurrentUser = async ():Promise<UserType> => {
+    if (!response.ok) {
+      
+      // Handle unauthorized access here
+      return { error: 'Unauthorized access' }; // Return an object indicating the error
+    }
+
+    // Check for a valid JSON response
+    try {
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw new Error('Failed to parse response data');
+    }
+  } catch (error) {
+    console.error("Error validating token:", error);
+    throw new Error('Failed to validate token');
+  }
+}
+export const fetchCurrentUser = async (): Promise<UserType> => {
   const response = await fetch(`${API_BASE_URL}/api/users/me`, {
     credentials: "include",
   });
   
   if (!response.ok) {
-    throw new Error("Error Fetching User");
+    if (response.status === 404) {
+     
+      //return response.json();
+      throw new Error("User not found");
+    } else {
+      throw new Error("Error Fetching User");
+    }
+  }else{
+    return response.json();
   }
-  return response.json();
+  
+  
 };
 
 export const register = async (formData: RegisterFormData) => {
@@ -49,16 +81,7 @@ export const signIn = async (formData: SignInFormData) => {
   return body;
 };
 
-export const validateToken = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/auth/validate-token`, {
-    credentials: "include",
-  });
-  
-  if (!response.ok) {
-    throw new Error("Token invalid");
-  }
-  return response.json();
-};
+
 
 export const signOut = async () => {
   const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {

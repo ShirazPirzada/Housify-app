@@ -5,7 +5,16 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import verifyToken from "../middleware/auth";
 const router = express.Router();
+router.get("/validate-token", verifyToken, (req: Request, res: Response) => {
+  // Access error details directly from res.locals (if available)
+  const { message = "", error = "" } = res.locals;
 
+  if (message === "unauthorized") {
+    // Send a descriptive error response, optionally including error details
+    return res.status(401).send({ message: "Unauthorized access", error });
+  }
+  res.status(200).send({ userId: req.userId });
+});
 router.post(
   "/login",
   [
@@ -51,15 +60,7 @@ router.post(
   }
 );
 
-router.get("/validate-token", verifyToken, (req: Request, res: Response) => {
-  
-  if (res.locals.message === "unauthorized") {
-   
-    return res.status(401).send("Unauthorized");
-  }
- 
-  res.status(200).send({ userId: req.userId });
-});
+
 
 router.post("/logout", (req: Request, res: Response) => {
   res.cookie("auth_token", "", {

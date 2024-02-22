@@ -51,6 +51,7 @@ const HomePage = () => {
       }
     };
     fetchData();
+    
   }, [userId, isLoggedIn]);
   return (
     <>
