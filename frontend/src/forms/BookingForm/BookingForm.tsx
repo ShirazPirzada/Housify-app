@@ -25,6 +25,7 @@ export type BookingFormData = {
   firstName: string;
   lastName: string;
   email: string;
+  userReligion:string;
   tenantCount: number;
   rentStartDate: string;
   rentEndDate: string;
@@ -65,6 +66,7 @@ const [paymentMethod, setPaymentMethod] = useState<"crypto" | "card">("crypto");
       firstName: currentUser.firstName,
       lastName: currentUser.lastName,
       email: currentUser.email,
+      userReligion:currentUser.userReligion,
       tenantCount: search.tenantCount,
       rentStartDate: search.rentStartDate.toISOString(),
       rentEndDate: search.rentEndDate.toISOString(),

@@ -108,6 +108,24 @@ export const fetchMyApartmentId = async (
   return response.json();
 };
 
+export const fetchSuggestiveApartments = async(userId:string):Promise<ApartmentType[]>=>{
+  const response = await fetch(`${API_BASE_URL}/api/apartments/suggestiveapartments/${userId}`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching apartments");
+  }
+  return response.json();
+}
+export const fetchAllApartments = async():Promise<ApartmentType[]>=>{
+  const response = await fetch(`${API_BASE_URL}/api/apartments/allapartments`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching apartments");
+  }
+  return response.json();
+}
 //Fetch by userId
 export const fetchUserById = async (
   userid: string
@@ -159,6 +177,7 @@ export const updateProfile = async (userFormData: FormData) => {
   return response.json();
 
 };
+
 
 
 export const updateMyApartmentById = async (apartmentFormData: FormData) => {

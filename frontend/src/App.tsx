@@ -16,9 +16,11 @@ import DetailPage from "./pages/DetailPage";
 import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import Profile from "./pages/Profile";
+import HomePage from "./pages/HomePage";
 
 function App() {
   const { isLoggedIn } = useAppContext();
+  
   return (
     <Router>
       <Routes>
@@ -26,7 +28,8 @@ function App() {
           path="/"
           element={
             <Layout isSignInPage={false}>
-              <p>Home Page</p>
+
+              <HomePage/>
             </Layout>
           }
         />

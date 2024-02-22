@@ -52,7 +52,12 @@ router.post(
 );
 
 router.get("/validate-token", verifyToken, (req: Request, res: Response) => {
-
+  
+  if (res.locals.message === "unauthorized") {
+   
+    return res.status(401).send("Unauthorized");
+  }
+ 
   res.status(200).send({ userId: req.userId });
 });
 

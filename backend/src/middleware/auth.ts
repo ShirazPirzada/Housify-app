@@ -12,7 +12,8 @@ declare global {
 
 const verifyToken = (req:Request,res:Response,next:NextFunction) =>{
     const token = req.cookies["auth_token"];
-    if(!token){
+   
+    if(!token && typeof token==="undefined"){
         return res.status(401).json({message:"unauthorized"});
     }
     try {

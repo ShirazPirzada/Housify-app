@@ -4,6 +4,7 @@ import { BookingType, SearchReponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
+import User from "../models/user";
 
 const stripe  = new Stripe(process.env.STRIPE_API_KEY as string);
 const router = express.Router();
@@ -54,6 +55,22 @@ router.get("/search", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+router.get("/allapartments",async (req: Request, res: Response) =>{
+  try {
+    
+    const allApartments = await Apartment.find().limit(4);
+    
+    if (!allApartments || allApartments.length === 0) {
+      return res.status(404).json({ message: "No apartments found" });
+    } 
+    res.json(allApartments);
+  } catch (error) {
+    console.log("Error fetching Apartments", error);
+    res.status(500).json({ message: "Error fetching Apartments" });
+  }
+}
+);
+
 router.get(
   "/:id",
   [param("id").notEmpty().withMessage("Apartment ID is required")],
@@ -79,6 +96,36 @@ router.get(
 );
 
 
+router.get("/suggestiveapartments/:userId",async (req: Request, res: Response) =>{
+  try {
+    const id = req.params.userId.toString();
+
+    // Get the user's religion
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    const userReligion = user.userReligion;
+
+    // Find apartments where all bookings have the user's religion
+    const apartments = await Apartment.find({
+      bookings: {
+        $elemMatch: { userReligion }
+      }
+    });
+
+    // Check if any apartments were found
+    if (!apartments.length) {
+      return res.status(404).json({ message: "No apartments found matching your religion" });
+    }
+
+    res.json(apartments);
+  } catch (error) {
+    console.log("Error fetching Suggested Apartments", error);
+    res.status(500).json({ message: "Error fetching Apartments" });
+  }
+}
+);
 
 
 
