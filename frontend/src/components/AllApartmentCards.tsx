@@ -6,7 +6,7 @@ type Props = {
 }
 const AllApartmentCards = ({apartment}:Props) => {
   return (
-    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ">
+    <div style={{ margin: "10px" }} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ">
       <Link to={`/detail/${apartment._id}`}>
         <img
           className="w-full h-64 object-cover object-center aspect-square"

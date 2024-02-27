@@ -92,7 +92,7 @@ const Profile = () => {
             <h1 className="text-3xl font-bold">Profile - Update</h1><br></br>
           </div>
           <FormProvider {...formMethods}>
-            <form className="flex flex-col gap-5" onSubmit={onSubmit}>
+            <form className="flex flex-col gap-5 px-4 sm:px-0" onSubmit={onSubmit}>
               <div className="flex flex-col md:flex-row gap-5">
                 <label className="text-gray-700 text-sm font-bold flex-1">
                   First Name
@@ -189,7 +189,7 @@ const Profile = () => {
                 <button
                   disabled={isLoading}
                   type="submit"
-                  className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl disabled:bg-gray-500"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   {isLoading ? "Saving..." : "Save"}
                 </button>

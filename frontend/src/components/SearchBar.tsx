@@ -31,20 +31,20 @@ const SearchBar = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="-mt-8 p-3 bg-orange-400 rounded shadow-md grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 items-center gap-4"
+      className="lg:-mt-8 p-3 bg-orange-400 rounded shadow-md grid grid-cols-1 gap-4 lg:grid-cols-2"
     >
-      <div className="flex flex-row items-center flex-1 bg-white p-2">
+      <div className="flex lg:flex-row items-center flex-1 bg-white p-2">
         <MdTravelExplore size={25} className="mr-2" />
         <input
           placeholder="Look for apartments?"
-          className="text-md w-full focus:outline-none"
+          className="w-full p-1 focus:outline font-bold"
           value={destination}
           onChange={(event) => setDestination(event.target.value)}
         />
       </div>
 
-      <div className="flex bg-white px-2 py-1 gap-2">
-        <label className="items-center flex">
+      <div className="lg:flex lg:bg-white lg:px-2 lg:py-1 lg:gap-2 lg:flex-col lg:items-start">
+        <label className="items-center lg:flex">
           Tenants:{" "}
           <input
             className="w-full p-1 focus:outline font-bold"
@@ -56,7 +56,7 @@ const SearchBar = () => {
           />
         </label>
       </div>
-      <div>
+      <div className="lg:flex lg:bg-white lg:px-2 lg:py-1 lg:gap-2 lg:flex-col lg:items-start">
         <DatePicker
           selected={rentStartDate}
           onChange={(date) => setRentStartDate(date as Date)}
@@ -70,7 +70,7 @@ const SearchBar = () => {
           wrapperClassName="min-w-full"
         />
       </div>
-      <div>
+      <div className="lg:flex lg:bg-white lg:px-2 lg:py-1 lg:gap-2 lg:flex-col lg:items-start">
         <DatePicker
           selected={rentEndDate}
           onChange={(date) => setRentEndDate(date as Date)}
@@ -84,13 +84,13 @@ const SearchBar = () => {
           wrapperClassName="min-w-full"
         />
       </div>
-      <div className="flex gap-1">
-        <button className="w-2/3 bg-blue-600 text-white h-full p-2 font-bold text-xl hover:bg-blue-500">
-          Search
-        </button>
-        <button className="w-1/3 bg-red-600 text-white h-full p-2 font-bold text-xl hover:bg-red-500">
-          Clear
-        </button>
+      <div className="lg:flex lg:gap-1 ">
+      <button className="w-2/3 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+Search
+</button>
+        <button className="w-1/2 text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+Clear
+</button>
       </div>
     </form>
   );
