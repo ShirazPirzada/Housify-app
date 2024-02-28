@@ -26,6 +26,7 @@ const apartmentSchema = new mongoose.Schema<ApartmentType>({
   imageUrls: [{ type: String, required: true }],
   lastUpdated: { type: Date, required: true },
   isActive: {type:Boolean},
+  isRejected:{type:Boolean},
   bookings: [bookingSchema]
 });
 

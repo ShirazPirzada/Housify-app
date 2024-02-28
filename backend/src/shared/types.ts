@@ -24,6 +24,7 @@ export type ApartmentType = {
   imageUrls: string[];
   lastUpdated: Date;
   isActive: boolean;
+  isRejected: boolean;
   bookings: BookingType[];
 };
 export type SearchReponse = {

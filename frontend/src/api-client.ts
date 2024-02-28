@@ -192,10 +192,32 @@ export const updateApartmentStatus = async (
     }
   );
   if (!response.ok) {
-    throw new Error("Error fetching apartments");
+    throw new Error("Error Updating apartments");
   }
   return response.json();
 };
+
+
+//Update Apartment Reject Status 
+export const updateApartmentRejectStatus = async (
+  apartmentId: string
+): Promise<ApartmentType> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/apartments/updateApartmentRejectStatus/${apartmentId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Error Updating apartments");
+  }
+  return response.json();
+};
+
 
 //Update user profile 
 export const updateProfile = async (userFormData: FormData) => {

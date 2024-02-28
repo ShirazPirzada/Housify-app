@@ -104,7 +104,32 @@ router.put("/updateApartmentStatus/:apartmentId", async (req: Request, res: Resp
       return res.status(404).json({ message: "No apartment found by this Id" });
     }
 
-    return res.status(200).json({ message: "Apartment status updated successfully", apartment });
+    return res.status(200).json({ message: "Apartment approved", apartment });
+  } catch (error) {
+    console.error("Error updating apartment status:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+})
+
+//update apartment reject status
+
+router.put("/updateApartmentRejectStatus/:apartmentId", async (req: Request, res: Response) =>{
+  const apartmentId = req.params.apartmentId;
+  if(apartmentId===null || typeof apartmentId==="undefined"){
+    return res.status(404).json({ message: "No apartment found by this Id" });
+  }
+  try {
+    const apartment = await Apartment.findOneAndUpdate(
+      { _id: apartmentId },
+      { isRejected: true },
+      { new: true }
+    );
+
+    if (!apartment) {
+      return res.status(404).json({ message: "No apartment found by this Id" });
+    }
+
+    return res.status(200).json({ message: "Apartment Rejected", apartment });
   } catch (error) {
     console.error("Error updating apartment status:", error);
     return res.status(500).json({ message: "Internal server error" });

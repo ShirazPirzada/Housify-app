@@ -46,7 +46,8 @@ router.post(
       newApartment.imageUrls = imageUrls;
       newApartment.lastUpdated = new Date();
       newApartment.userId = req.userId;
-
+      newApartment.isActive=false;
+      newApartment.isRejected=false;
       const apartment = new Apartment(newApartment);
       await apartment.save();
 

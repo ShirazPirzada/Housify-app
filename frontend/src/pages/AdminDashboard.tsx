@@ -23,15 +23,16 @@ const AdminDashboard = () => {
       const handleApprove = async (apartmentId) => {
         try {
             // Make API call to update apartment isActive to true
-            const response =  await apiClient.updateApartmentStatus(apartmentId);
+             await apiClient.updateApartmentStatus(apartmentId);
             // Update state to remove the activated apartment
             setApartmentData(apartmentData.filter(apartment => apartment._id !== apartmentId));
-            console.log(response);
-            //alert(response.message);
+            
         } catch (error) {
             // Handle error if needed
         }
     };
+
+    
 
     if (!apartmentData) {
       return <>Data not found</>;

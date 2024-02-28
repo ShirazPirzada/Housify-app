@@ -17,7 +17,7 @@ export type ApartmentFormData = {
   Rating: number;
   facilities: string[];
   imageFiles: FileList;
-  imageUrls:string[];
+  imageUrls: string[];
   tenantCount: number;
 };
 
@@ -37,8 +37,8 @@ const ManageApartmentForm = ({ onSave, isLoading, apartment }: Props) => {
 
   const onSubmit = handleSubmit((formDataJson: ApartmentFormData) => {
     const formData = new FormData();
-    if(apartment){
-      formData.append("apartmentId",apartment._id);
+    if (apartment) {
+      formData.append("apartmentId", apartment._id);
     }
     formData.append("name", formDataJson.name);
     formData.append("city", formDataJson.city);
@@ -48,23 +48,21 @@ const ManageApartmentForm = ({ onSave, isLoading, apartment }: Props) => {
     formData.append("pricePerMonth", formDataJson.pricePerMonth.toString());
     formData.append("Rating", formDataJson.Rating.toString());
     formData.append("tenantCount", formDataJson.tenantCount.toString());
-
+   
     formDataJson.facilities.forEach((facility, index) => [
       formData.append(`facilities[${index}]`, facility),
     ]);
 
-    if(formDataJson.imageUrls){
-      formDataJson.imageUrls.forEach((url,index)=>{
-        formData.append(`imageUrls[${index}]`,url);
-      })
+    if (formDataJson.imageUrls) {
+      formDataJson.imageUrls.forEach((url, index) => {
+        formData.append(`imageUrls[${index}]`, url);
+      });
     }
 
     //Filelist not allows us to use foreach , thats why we use array here
     Array.from(formDataJson.imageFiles).forEach((imageFile) => {
       formData.append(`imageFiles`, imageFile);
     });
-
-    
 
     onSave(formData);
   });
