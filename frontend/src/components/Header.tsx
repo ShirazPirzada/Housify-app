@@ -160,8 +160,6 @@ const Header = () => {
               >
                 My Profile
               </Link>
-              
-
               <SignOutButton />
             </>
           ) : (

@@ -55,10 +55,10 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     }
   );
 
-const [cryptoMsg,setCryptoMsg] = useState("Test");
-function handleCallBackMsg(cryptoMsg){
-  setCryptoMsg(cryptoMsg);
-}
+// const [cryptoMsg,setCryptoMsg] = useState("Test");
+// function handleCallBackMsg(cryptoMsg){
+//   setCryptoMsg(cryptoMsg);
+// }
 const [paymentMethod, setPaymentMethod] = useState<"crypto" | "card">("crypto");
 
   const { handleSubmit, register ,watch} = useForm<BookingFormData>({
@@ -175,7 +175,7 @@ const [paymentMethod, setPaymentMethod] = useState<"crypto" | "card">("crypto");
             paymentIntent={paymentIntent}
             rentStartDate={search.rentStartDate}
             rentEndDate={search.rentEndDate}
-            handleCallBackMsg={handleCallBackMsg}
+            //handleCallBackMsg={handleCallBackMsg}
             formData={formData}
           />
           )}

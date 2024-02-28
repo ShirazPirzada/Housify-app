@@ -16,7 +16,7 @@ type Props = {
   paymentIntent: PaymentIntentResponse;
   rentStartDate: Date;
   rentEndDate: Date;
-  handleCallBackMsg: (msg: string) => void;
+  // handleCallBackMsg: (msg: string) => void;
   formData: BookingFormData;
 };
 const ConfirmBookingComponent = ({

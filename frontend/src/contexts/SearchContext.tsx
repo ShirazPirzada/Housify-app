@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { Children } from "react";
 
 type SearchContext = {
   destination: string;
