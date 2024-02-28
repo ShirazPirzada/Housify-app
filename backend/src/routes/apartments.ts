@@ -14,7 +14,7 @@ router.get("/search", async (req: Request, res: Response) => {
   try {
     // console.log("Params: ",req.query);
     const query = constructSearchQuery(req.query);
-
+    query.isActive = true;
     let sortOptions = {};
     switch (req.query.sortOption) {
       case "starRating":
@@ -58,7 +58,7 @@ router.get("/search", async (req: Request, res: Response) => {
 router.get("/allapartments",async (req: Request, res: Response) =>{
   try {
     
-    const allApartments = await Apartment.find().limit(4);
+    const allApartments = await Apartment.find({ isActive: true }).limit(4);
     
     if (!allApartments || allApartments.length === 0) {
       return res.status(404).json({ message: "No apartments found" });
@@ -70,6 +70,46 @@ router.get("/allapartments",async (req: Request, res: Response) =>{
   }
 }
 );
+
+router.get("/inactiveapartments",async (req: Request, res: Response) =>{
+  try {
+    
+    const allApartments = await Apartment.find({ isActive: false });
+    
+    if (!allApartments || allApartments.length === 0) {
+      return res.status(404).json({ message: "No apartments found" });
+    } 
+    res.json(allApartments);
+  } catch (error) {
+    console.log("Error fetching Apartments", error);
+    res.status(500).json({ message: "Error fetching Apartments" });
+  }
+}
+);
+
+//update the apartmentStatus
+router.put("/updateApartmentStatus/:apartmentId", async (req: Request, res: Response) =>{
+  const apartmentId = req.params.apartmentId;
+  if(apartmentId===null || typeof apartmentId==="undefined"){
+    return res.status(404).json({ message: "No apartment found by this Id" });
+  }
+  try {
+    const apartment = await Apartment.findOneAndUpdate(
+      { _id: apartmentId },
+      { isActive: true }, // Update isActive to true
+      { new: true }
+    );
+
+    if (!apartment) {
+      return res.status(404).json({ message: "No apartment found by this Id" });
+    }
+
+    return res.status(200).json({ message: "Apartment status updated successfully", apartment });
+  } catch (error) {
+    console.error("Error updating apartment status:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+})
 
 router.get(
   "/:id",
@@ -85,7 +125,7 @@ router.get(
     const id = req.params.id.toString();
 
     try {
-      const apartment = await Apartment.findById(id);
+      const apartment = await Apartment.findOne({ _id: id, isActive: true });
 
       res.json(apartment);
     } catch (error) {
@@ -136,7 +176,7 @@ router.post("/:apartmentId/bookings/payment-intent",verifyToken,async(req:Reques
   const { numberOfMonths } = req.body;
   const apartmentId = req.params.apartmentId;
 
-  const apartment = await Apartment.findById(apartmentId);
+  const apartment = await Apartment.findOne({ _id: apartmentId, isActive: true });
   if (!apartment) {
     return res.status(400).json({ message: "Apartment not found" });
   }

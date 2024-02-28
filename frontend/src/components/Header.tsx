@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import SignOutButton from "./SIgnOutButton";
-import * as apiClient from "../api-client"
+import * as apiClient from "../api-client";
 import { useEffect, useState } from "react";
 import { UserType } from "../../../backend/src/shared/types";
 
@@ -20,17 +20,17 @@ const Header = () => {
         // Handle errors if needed
       }
     };
-  
+
     // Run fetchData only when the user is logged in
     if (isLoggedIn) {
       fetchData();
     }
   }, [isLoggedIn]); // Run effect when isLoggedIn changes
-  
-  let userType:any ;
-  
-  if(isLoggedIn){
-    userType= currentUser?.userType;
+
+  let userType: any;
+
+  if (isLoggedIn) {
+    userType = currentUser?.userType;
   }
 
   return (
@@ -50,15 +50,29 @@ const Header = () => {
               stroke="currentColor"
             >
               {menuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
               )}
             </svg>
           </button>
         </div>
         {/* Sidebar Links */}
-        <div className={`fixed top-0 left-0 h-full bg-blue-800 text-white w-48 lg:hidden z-50 ${menuOpen ? 'block' : 'hidden'}`}>
+        <div
+          className={`fixed top-0 left-0 h-full bg-blue-800 text-white w-48 lg:hidden z-50 ${
+            menuOpen ? "block" : "hidden"
+          }`}
+        >
           <div className="p-4">
             {isLoggedIn ? (
               <>
@@ -102,12 +116,36 @@ const Header = () => {
         <div className="hidden lg:flex lg:space-x-2">
           {isLoggedIn ? (
             <>
+              {userType === "SuperAdmin" && (
+                <><Link
+                  className="text-white font-bold hover:bg-blue-600 px-3 py-1 rounded-md"
+                  to="/admin"
+                >
+                  Apartments List
+                </Link><Link
+                  className="text-white font-bold hover:bg-blue-600 px-3 py-1 rounded-md"
+                  to="/bookedapartments"
+                >
+                     Booked Apartments
+                  </Link>
+                  <Link
+                  className="text-white font-bold hover:bg-blue-600 px-3 py-1 rounded-md"
+                  to="/my-apartments"
+                >
+                  Add Apartments
+                </Link>
+                  </>
+                
+              )}
+              {userType ==="customer" && (
               <Link
                 className="text-white font-bold hover:bg-blue-600 px-3 py-1 rounded-md"
                 to="/bookedapartments"
               >
                 My Bookings
               </Link>
+              )}
+        
               {userType === "landlord" && (
                 <Link
                   className="text-white font-bold hover:bg-blue-600 px-3 py-1 rounded-md"
@@ -122,6 +160,8 @@ const Header = () => {
               >
                 My Profile
               </Link>
+              
+
               <SignOutButton />
             </>
           ) : (

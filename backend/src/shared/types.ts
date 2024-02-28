@@ -23,6 +23,7 @@ export type ApartmentType = {
   Rating: number;
   imageUrls: string[];
   lastUpdated: Date;
+  isActive: boolean;
   bookings: BookingType[];
 };
 export type SearchReponse = {

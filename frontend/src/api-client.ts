@@ -149,6 +149,18 @@ export const fetchAllApartments = async():Promise<ApartmentType[]>=>{
   }
   return response.json();
 }
+//fetch inactive apartments
+export const fetchInActiveApartments = async():Promise<ApartmentType[]>=>{
+  const response = await fetch(`${API_BASE_URL}/api/apartments/inactiveapartments`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching apartments");
+  }
+  return response.json();
+}
+
+
 //Fetch by userId
 export const fetchUserById = async (
   userid: string
@@ -161,6 +173,26 @@ export const fetchUserById = async (
   );
   if (!response.ok) {
     throw new Error("Error fetching User");
+  }
+  return response.json();
+};
+
+//Update Apartment Status
+export const updateApartmentStatus = async (
+  apartmentId: string
+): Promise<ApartmentType> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/apartments/updateApartmentStatus/${apartmentId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Error fetching apartments");
   }
   return response.json();
 };

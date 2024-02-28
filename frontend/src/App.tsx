@@ -17,6 +17,7 @@ import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import Profile from "./pages/Profile";
 import HomePage from "./pages/HomePage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -30,6 +31,14 @@ function App() {
             <Layout isSignInPage={false}>
 
               <HomePage/>
+            </Layout>
+          }
+        />
+          <Route
+          path="/admin"
+          element={
+            <Layout isSignInPage={false}>
+              <AdminDashboard/>
             </Layout>
           }
         />

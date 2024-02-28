@@ -1,12 +1,12 @@
-import { ApartmentType } from "../../../backend/src/shared/types"
+import { ApartmentType } from "../../../backend/src/shared/types";
 import { AiFillStar } from "react-icons/ai";
 import { Link } from "react-router-dom";
 type Props = {
-    apartment: ApartmentType;
-}
+  apartment: ApartmentType;
+};
 
-const SearchResultCard = ({apartment}:Props)=>{
-return(
+const SearchResultCard = ({ apartment }: Props) => {
+  return (
     <div className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] border border-slate-300 rounded-lg p-8 gap-8">
       <div className="w-full h-[300px]">
         <img
@@ -48,19 +48,25 @@ return(
                 `+${apartment.facilities.length - 3} more`}
             </span>
           </div>
+        </div>
+        <br></br>
+        <div className="flex justify-between items-center">
+        <Link
+            to={`/detail/${apartment._id}`}
+            className="bg-blue-600 rounded text-white h-full p-2 font-bold text-xl max-w-fit hover:bg-blue-500"
+          >
+            View More
+          </Link>
           <div className="flex flex-col items-end gap-1">
-            <span className="font-bold">Rs {apartment.pricePerMonth} per month</span>
-            <Link
-              to={`/detail/${apartment._id}`}
-              className="bg-blue-600 text-white h-full p-2 font-bold text-xl max-w-fit hover:bg-blue-500"
-            >
-              View More
-            </Link>
+            <span className="font-bold">
+              Rs {apartment.pricePerMonth} per month
+            </span>
           </div>
+          
         </div>
       </div>
     </div>
-)
-}
+  );
+};
 
 export default SearchResultCard;
