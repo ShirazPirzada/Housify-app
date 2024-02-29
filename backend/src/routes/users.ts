@@ -55,7 +55,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
     }
-    //TODO: Check User's Cnic if not found. User is not legitimate.
+    // Check User's Cnic if not found. User is not legitimate.
     try {
       let user = await User.findOne({
         email: req.body.email,
@@ -83,7 +83,7 @@ router.post(
         { userId: user.id },
         process.env.JWT_SECRET_KEY as string,
         {
-          expiresIn: "3d",
+          expiresIn: "1d",
         }
       );
 

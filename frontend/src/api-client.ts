@@ -228,6 +228,7 @@ export const updateProfile = async (userFormData: FormData) => {
   const email = userFormData.get("email");
   const userReligion = userFormData.get("userReligion");
   const password = userFormData.get("password");
+  const userWalletAddress = userFormData.get("userWalletAddress");
   const requestBody = {
     userId,
     firstName,
@@ -235,6 +236,7 @@ export const updateProfile = async (userFormData: FormData) => {
     email,
     userReligion,
     password,
+    userWalletAddress
   };
   const response = await fetch(
     `${API_BASE_URL}/api/users/${userId}`,

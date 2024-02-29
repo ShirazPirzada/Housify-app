@@ -10,6 +10,7 @@ export type RegisterFormData = {
   CNIC: string;
   userType:string;
   userReligion:string;
+  userWalletAddress:string;
   password: string;
   confirmPassword: string;
 };
@@ -86,6 +87,17 @@ const Register = () => {
         {errors.CNIC && (
           <span className="text-red-500">{errors.CNIC.message}</span>
         )}
+      </label>
+      
+      <label className="text-gray-700 text-sm font-bold flex-1">
+        Wallet Address
+        <input
+          className="border rounded w-full py-1 px-2 font-normal"
+          {...register("userWalletAddress")}
+        ></input>
+        {/* {errors.userWalletAddress && ( 
+          <span className="text-red-500">{errors.userWalletAddress.message}</span>
+        )} */}
       </label>
       <label className="text-gray-700 text-sm font-bold flex-1">
         User Type

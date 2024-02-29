@@ -7,6 +7,7 @@ export type UserType = {
   CNIC: string;
   userType: string;
   userReligion: string;
+  userWalletAddress:string;
 };
 
 export type ApartmentType = {

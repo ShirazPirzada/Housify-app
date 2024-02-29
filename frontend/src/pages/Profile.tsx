@@ -13,6 +13,7 @@ export type UserFormData = {
   userReligion: string;
   password: string;
   confirmPassword: string;
+  userWalletAddress: string;
 };
 
 const Profile = () => {
@@ -130,7 +131,17 @@ const Profile = () => {
                   <span className="text-red-500">{errors.email.message}</span>
                 )}
               </label>
-  
+              <label className="text-gray-700 text-sm font-bold flex-1">
+                Wallet Address
+                <input
+                
+                  className="border rounded w-full py-1 px-2 font-normal"
+                  {...register("userWalletAddress")}
+                />
+                {/* {errors.userWalletAddress && (
+                  <span className="text-red-500">{errors.email.message}</span>
+                )} */}
+              </label>
               <label className="text-gray-700 text-sm font-bold flex-1">
                 Religion
                 <select
