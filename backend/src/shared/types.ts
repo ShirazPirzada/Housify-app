@@ -27,6 +27,7 @@ export type ApartmentType = {
   isActive: boolean;
   isRejected: boolean;
   bookings: BookingType[];
+  tempBookings: TempBooking[];
 };
 export type SearchReponse = {
   data: ApartmentType[];
@@ -48,6 +49,17 @@ export type BookingType = {
   rentEndDate: Date;
   totalCost: number;
 };
+
+export type TempBooking = {
+  userId: string;
+  tenantCount: number;
+  rentStartDate: Date;
+  rentEndDate: Date;
+  apartmentId:string;
+  validityDate: Date;
+
+};
+
 
 export type PaymentIntentResponse = {
   paymentIntentId:string;

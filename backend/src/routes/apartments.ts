@@ -1,14 +1,13 @@
 import express, { Request, Response } from "express";
 import Apartment from "../models/apartment";
-import { BookingType, SearchReponse } from "../shared/types";
+import { BookingType, SearchReponse, TempBooking } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
 import User from "../models/user";
 
-const stripe  = new Stripe(process.env.STRIPE_API_KEY as string);
+const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 const router = express.Router();
-
 
 router.get("/search", async (req: Request, res: Response) => {
   try {
@@ -55,96 +54,102 @@ router.get("/search", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
-router.get("/allapartments",async (req: Request, res: Response) =>{
+router.get("/allapartments", async (req: Request, res: Response) => {
   try {
-    
     const allApartments = await Apartment.find({ isActive: true }).limit(4);
-    
-    if (!allApartments || allApartments.length === 0) {
-      return res.status(404).json({ message: "No apartments found" });
-    } 
-    res.json(allApartments);
-  } catch (error) {
-    console.log("Error fetching Apartments", error);
-    res.status(500).json({ message: "Error fetching Apartments" });
-  }
-}
-);
 
-router.get("/inactiveapartments",async (req: Request, res: Response) =>{
-  try {
-    
-    const allApartments = await Apartment.find({ isActive: false });
-    
     if (!allApartments || allApartments.length === 0) {
       return res.status(404).json({ message: "No apartments found" });
-    } 
+    }
     res.json(allApartments);
   } catch (error) {
     console.log("Error fetching Apartments", error);
     res.status(500).json({ message: "Error fetching Apartments" });
   }
-}
-);
+});
+
+router.get("/inactiveapartments", async (req: Request, res: Response) => {
+  try {
+    const allApartments = await Apartment.find({ isActive: false });
+
+    if (!allApartments || allApartments.length === 0) {
+      return res.status(404).json({ message: "No apartments found" });
+    }
+    res.json(allApartments);
+  } catch (error) {
+    console.log("Error fetching Apartments", error);
+    res.status(500).json({ message: "Error fetching Apartments" });
+  }
+});
 
 //update the apartmentStatus
-router.put("/updateApartmentStatus/:apartmentId", async (req: Request, res: Response) =>{
-  const apartmentId = req.params.apartmentId;
-  if(apartmentId===null || typeof apartmentId==="undefined"){
-    return res.status(404).json({ message: "No apartment found by this Id" });
-  }
-  try {
-    const apartment = await Apartment.findOneAndUpdate(
-      { _id: apartmentId },
-      { isActive: true }, // Update isActive to true
-      { new: true }
-    );
-
-    if (!apartment) {
+router.put(
+  "/updateApartmentStatus/:apartmentId",
+  async (req: Request, res: Response) => {
+    const apartmentId = req.params.apartmentId;
+    if (apartmentId === null || typeof apartmentId === "undefined") {
       return res.status(404).json({ message: "No apartment found by this Id" });
     }
+    try {
+      const apartment = await Apartment.findOneAndUpdate(
+        { _id: apartmentId },
+        { isActive: true }, // Update isActive to true
+        { new: true }
+      );
 
-    return res.status(200).json({ message: "Apartment approved", apartment });
-  } catch (error) {
-    console.error("Error updating apartment status:", error);
-    return res.status(500).json({ message: "Internal server error" });
+      if (!apartment) {
+        return res
+          .status(404)
+          .json({ message: "No apartment found by this Id" });
+      }
+
+      return res.status(200).json({ message: "Apartment approved", apartment });
+    } catch (error) {
+      console.error("Error updating apartment status:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
-})
+);
 
 //update apartment reject status
 
-router.put("/updateApartmentRejectStatus/:apartmentId", async (req: Request, res: Response) =>{
-  const apartmentId = req.params.apartmentId;
-  if(apartmentId===null || typeof apartmentId==="undefined"){
-    return res.status(404).json({ message: "No apartment found by this Id" });
-  }
-  try {
-    const apartment = await Apartment.findOneAndUpdate(
-      { _id: apartmentId },
-      { isRejected: true },
-      { new: true }
-    );
-
-    if (!apartment) {
+router.put(
+  "/updateApartmentRejectStatus/:apartmentId",
+  async (req: Request, res: Response) => {
+    const apartmentId = req.params.apartmentId;
+    if (apartmentId === null || typeof apartmentId === "undefined") {
       return res.status(404).json({ message: "No apartment found by this Id" });
     }
+    try {
+      const apartment = await Apartment.findOneAndUpdate(
+        { _id: apartmentId },
+        { isRejected: true },
+        { new: true }
+      );
 
-    return res.status(200).json({ message: "Apartment Rejected", apartment });
-  } catch (error) {
-    console.error("Error updating apartment status:", error);
-    return res.status(500).json({ message: "Internal server error" });
+      if (!apartment) {
+        return res
+          .status(404)
+          .json({ message: "No apartment found by this Id" });
+      }
+
+      return res.status(200).json({ message: "Apartment Rejected", apartment });
+    } catch (error) {
+      console.error("Error updating apartment status:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
-})
+);
 
 router.get(
   "/:id",
   [param("id").notEmpty().withMessage("Apartment ID is required")],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
-    
+
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-      console.log("Error fetching ApartmentId: ",errors);
+      console.log("Error fetching ApartmentId: ", errors);
     }
 
     const id = req.params.id.toString();
@@ -160,115 +165,191 @@ router.get(
   }
 );
 
+router.get(
+  "/suggestiveapartments/:userId",
+  async (req: Request, res: Response) => {
+    try {
+      const id = req.params.userId.toString();
 
-router.get("/suggestiveapartments/:userId",async (req: Request, res: Response) =>{
-  try {
-    const id = req.params.userId.toString();
-
-    // Get the user's religion
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
-    const userReligion = user.userReligion;
-
-    // Find apartments where all bookings have the user's religion
-    const apartments = await Apartment.find({
-      bookings: {
-        $elemMatch: { userReligion }
+      // Get the user's religion
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: "User not found" });
       }
-    });
+      const userReligion = user.userReligion;
 
-    // Check if any apartments were found
-    if (!apartments.length) {
-      return res.status(404).json({ message: "No apartments found matching your religion" });
+      // Find apartments where all bookings have the user's religion
+      const apartments = await Apartment.find({
+        bookings: {
+          $elemMatch: { userReligion },
+        },
+      });
+
+      // Check if any apartments were found
+      if (!apartments.length) {
+        return res
+          .status(404)
+          .json({ message: "No apartments found matching your religion" });
+      }
+
+      res.json(apartments);
+    } catch (error) {
+      console.log("Error fetching Suggested Apartments", error);
+      res.status(500).json({ message: "Error fetching Apartments" });
     }
-
-    res.json(apartments);
-  } catch (error) {
-    console.log("Error fetching Suggested Apartments", error);
-    res.status(500).json({ message: "Error fetching Apartments" });
   }
-}
 );
 
+router.post(
+  "/:apartmentId/bookings/payment-intent",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const { numberOfMonths } = req.body;
+    const apartmentId = req.params.apartmentId;
 
+    const apartment = await Apartment.findOne({
+      _id: apartmentId,
+      isActive: true,
+    });
+    if (!apartment) {
+      return res.status(400).json({ message: "Apartment not found" });
+    }
 
+    const totalCost = apartment.pricePerMonth * numberOfMonths * 0.2;
 
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalCost * 100,
+      currency: "inr",
+      metadata: {
+        apartmentId: apartmentId,
+        userId: req.userId,
+      },
+    });
 
-router.post("/:apartmentId/bookings/payment-intent",verifyToken,async(req:Request,res:Response)=>{
- 
-  const { numberOfMonths } = req.body;
-  const apartmentId = req.params.apartmentId;
+    if (!paymentIntent.client_secret) {
+      return res.status(500).json({ message: "Error creating payment intent" });
+    }
 
-  const apartment = await Apartment.findOne({ _id: apartmentId, isActive: true });
-  if (!apartment) {
-    return res.status(400).json({ message: "Apartment not found" });
+    const response = {
+      paymentIntentId: paymentIntent.id,
+      clientSecret: paymentIntent.client_secret.toString(),
+      totalCost,
+    };
+
+    res.send(response);
   }
+);
 
-  const totalCost = (apartment.pricePerMonth * numberOfMonths) * .2;
+//Temp booking post api
+router.post(
+  "/:apartmentId/tempbookings",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const newTempBooking: TempBooking = {
+        ...req.body,
+        userId: req.userId,
+      };
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: totalCost * 100,
-    currency: "inr",
-    metadata: {
-      apartmentId: apartmentId,
-      userId: req.userId,
-    },
-  });
+      const apartment = await Apartment.findOneAndUpdate(
+        { _id: newTempBooking.apartmentId },
+        {
+          $push: { tempBookings: newTempBooking },
+        },
+        { new: true } // This ensures you get the updated document in the response
+      );
 
-  if (!paymentIntent.client_secret) {
-    return res.status(500).json({ message: "Error creating payment intent" });
+      if (!apartment) {
+        return res.status(400).json({ message: "apartment not found" });
+      }
+
+      await apartment.save();
+
+      res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "something went wrong" });
+    }
   }
+);
 
-  const response = {
-    paymentIntentId: paymentIntent.id,
-    clientSecret: paymentIntent.client_secret.toString(),
-    totalCost,
-  };
+//delete temp bookings
+router.post(
+  "/:apartmentId/deletetempbookings",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.userId;
+      const apartmentId = req.params.apartmentId;
 
-  res.send(response);
-});
+      const apartment = await Apartment.findOneAndUpdate(
+        {
+          $and: [
+            { "tempBookings.apartmentId": apartmentId },
+            { "tempBookings.userId": userId },
+          ],
+        },
+        {
+          $pull: {
+            tempBookings: {
+              apartmentId: apartmentId,
+              userId: userId,
+            },
+          },
+        },
+        { new: true, fields: { tempBookings: 1 } }
+      );
+
+      if (!apartment) {
+        return res.status(404).json({ message: "Apartment not found" });
+      }
+
+      await apartment.save();
+
+      res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "something went wrong" });
+    }
+  }
+);
 
 router.post(
   "/:apartmentId/bookings",
   verifyToken,
   async (req: Request, res: Response) => {
     try {
-   
       const paymentIntentId = req.body.paymentIntentId;
       const paymentType = req.body.PaymentType;
-      if(paymentType==="crypto"){
-    
-      }else{
+      if (paymentType === "crypto") {
+      } else {
         const paymentIntent = await stripe.paymentIntents.retrieve(
           paymentIntentId as string
         );
-  
+
         if (!paymentIntent) {
           return res.status(400).json({ message: "payment intent not found" });
         }
-  
+
         if (
           paymentIntent.metadata.apartmentId !== req.params.apartmentId ||
           paymentIntent.metadata.userId !== req.userId
         ) {
           return res.status(400).json({ message: "payment intent mismatch" });
         }
-  
+
         if (paymentIntent.status !== "succeeded") {
           return res.status(400).json({
             message: `payment intent not succeeded. Status: ${paymentIntent.status}`,
           });
         }
       }
-      
-      
+
       const newBooking: BookingType = {
         ...req.body,
         userId: req.userId,
       };
-    
+
       const apartment = await Apartment.findOneAndUpdate(
         { _id: req.params.apartmentId },
         {
@@ -276,7 +357,7 @@ router.post(
         },
         { new: true } // This ensures you get the updated document in the response
       );
-     
+
       if (!apartment) {
         return res.status(400).json({ message: "apartment not found" });
       }

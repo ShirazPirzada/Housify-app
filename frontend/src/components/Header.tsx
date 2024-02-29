@@ -37,7 +37,7 @@ const Header = () => {
     <div className="bg-blue-800 py-6">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-3xl text-white font-bold tracking-tight px-4 sm:px-0">
-          <Link to="/">Housify.com</Link>
+          <Link to="/">Housify</Link>
         </div>
         {/* Hamburger Menu for Mobile View */}
         <div className="lg:hidden">

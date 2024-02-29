@@ -16,6 +16,7 @@ type AppContext  = {
     showToast: (toastMessage: ToastMessage)=>void;
     isLoggedIn:boolean;
     stripePromise: Promise<Stripe | null>;
+    userId:string;
 }
 
 
@@ -32,7 +33,9 @@ export const AppContextProvider = ({children}:{
     const {data, isError} = useQuery("validateToken",apiClient.validateToken,{
         retry:false,
     });
-   
+  
+   // Destructure userId from data if data is defined
+    const { userId } = data || {};
     // Determine isLoggedIn based on the data and isError
     const _isLoggedIn = !isError && !!data && !data.error;
 
@@ -46,7 +49,8 @@ export const AppContextProvider = ({children}:{
                setToast(toastMessage);
             },
             isLoggedIn: _isLoggedIn,
-            stripePromise
+            stripePromise,
+            userId
         }}>
             {toast && (<Toast message={toast.message} type={toast.type} onClose={()=>setToast(undefined)}/>)}
             {children}</AppContext.Provider>

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ApartmentType, BookingType } from "../shared/types";
+import { ApartmentType, BookingType, TempBooking } from "../shared/types";
 
 const bookingSchema = new mongoose.Schema<BookingType>({
   firstName: { type: String, required: true },
@@ -10,6 +10,15 @@ const bookingSchema = new mongoose.Schema<BookingType>({
   rentEndDate: { type: Date, required: true },
   userId: { type: String, required: true },
   totalCost: { type: Number, required: true },
+})
+
+const tempbookingSchema = new mongoose.Schema<TempBooking>({
+  userId: { type: String, required: true },
+  tenantCount: { type: Number, required: true },
+  rentStartDate: { type: Date, required: true },
+  rentEndDate: { type: Date, required: true },
+  apartmentId: { type: String, required: true },
+  validityDate: { type: Date, required: true },
 })
 
 const apartmentSchema = new mongoose.Schema<ApartmentType>({
@@ -27,7 +36,8 @@ const apartmentSchema = new mongoose.Schema<ApartmentType>({
   lastUpdated: { type: Date, required: true },
   isActive: {type:Boolean},
   isRejected:{type:Boolean},
-  bookings: [bookingSchema]
+  bookings: [bookingSchema],
+  tempBookings: [tempbookingSchema]
 });
 
 const Apartment = mongoose.model<ApartmentType>("Apartment",apartmentSchema);

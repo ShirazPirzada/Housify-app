@@ -1,7 +1,14 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { ApartmentType, PaymentIntentResponse, SearchReponse, UserType } from "../../backend/src/shared/types";
+import {
+  ApartmentType,
+  PaymentIntentResponse,
+  SearchReponse,
+  TempBooking,
+  UserType,
+} from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
+import { TempBookingFormData } from "./forms/UserForm/UserForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 export const validateToken = async () => {
   try {
@@ -10,9 +17,8 @@ export const validateToken = async () => {
     });
 
     if (!response.ok) {
-      
       // Handle unauthorized access here
-      return { error: 'Unauthorized access' }; // Return an object indicating the error
+      return { error: "Unauthorized access" }; // Return an object indicating the error
     }
 
     // Check for a valid JSON response
@@ -20,31 +26,28 @@ export const validateToken = async () => {
       const data = await response.json();
       return data;
     } catch (error) {
-      throw new Error('Failed to parse response data');
+      throw new Error("Failed to parse response data");
     }
   } catch (error) {
     console.error("Error validating token:", error);
-    throw new Error('Failed to validate token');
+    throw new Error("Failed to validate token");
   }
-}
+};
 export const fetchCurrentUser = async (): Promise<UserType> => {
   const response = await fetch(`${API_BASE_URL}/api/users/me`, {
     credentials: "include",
   });
-  
+
   if (!response.ok) {
     if (response.status === 404) {
-     
       //return response.json();
       throw new Error("User not found");
     } else {
       throw new Error("Error Fetching User");
     }
-  }else{
+  } else {
     return response.json();
   }
-  
-  
 };
 
 export const register = async (formData: RegisterFormData) => {
@@ -63,7 +66,6 @@ export const register = async (formData: RegisterFormData) => {
   }
 };
 
-
 export const signIn = async (formData: SignInFormData) => {
   const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
     method: "POST",
@@ -80,8 +82,6 @@ export const signIn = async (formData: SignInFormData) => {
   }
   return body;
 };
-
-
 
 export const signOut = async () => {
   const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
@@ -131,16 +131,21 @@ export const fetchMyApartmentId = async (
   return response.json();
 };
 
-export const fetchSuggestiveApartments = async(userId:string):Promise<ApartmentType[]>=>{
-  const response = await fetch(`${API_BASE_URL}/api/apartments/suggestiveapartments/${userId}`, {
-    credentials: "include",
-  });
+export const fetchSuggestiveApartments = async (
+  userId: string
+): Promise<ApartmentType[]> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/apartments/suggestiveapartments/${userId}`,
+    {
+      credentials: "include",
+    }
+  );
   if (!response.ok) {
     throw new Error("Error fetching apartments");
   }
   return response.json();
-}
-export const fetchAllApartments = async():Promise<ApartmentType[]>=>{
+};
+export const fetchAllApartments = async (): Promise<ApartmentType[]> => {
   const response = await fetch(`${API_BASE_URL}/api/apartments/allapartments`, {
     credentials: "include",
   });
@@ -148,29 +153,26 @@ export const fetchAllApartments = async():Promise<ApartmentType[]>=>{
     throw new Error("Error fetching apartments");
   }
   return response.json();
-}
+};
 //fetch inactive apartments
-export const fetchInActiveApartments = async():Promise<ApartmentType[]>=>{
-  const response = await fetch(`${API_BASE_URL}/api/apartments/inactiveapartments`, {
-    credentials: "include",
-  });
-  if (!response.ok) {
-    throw new Error("Error fetching apartments");
-  }
-  return response.json();
-}
-
-
-//Fetch by userId
-export const fetchUserById = async (
-  userid: string
-): Promise<UserType> => {
+export const fetchInActiveApartments = async (): Promise<ApartmentType[]> => {
   const response = await fetch(
-    `${API_BASE_URL}/api/users/${userid}`,
+    `${API_BASE_URL}/api/apartments/inactiveapartments`,
     {
       credentials: "include",
     }
   );
+  if (!response.ok) {
+    throw new Error("Error fetching apartments");
+  }
+  return response.json();
+};
+
+//Fetch by userId
+export const fetchUserById = async (userid: string): Promise<UserType> => {
+  const response = await fetch(`${API_BASE_URL}/api/users/${userid}`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error("Error fetching User");
   }
@@ -197,8 +199,7 @@ export const updateApartmentStatus = async (
   return response.json();
 };
 
-
-//Update Apartment Reject Status 
+//Update Apartment Reject Status
 export const updateApartmentRejectStatus = async (
   apartmentId: string
 ): Promise<ApartmentType> => {
@@ -218,10 +219,27 @@ export const updateApartmentRejectStatus = async (
   return response.json();
 };
 
+//Insert data in Apartments in tempbookings array
+export const createTempBooking = async (formData: TempBookingFormData) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/apartments/${formData.apartmentId}/tempbookings`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(formData),
+    }
+  );
 
-//Update user profile 
+  if (!response.ok) {
+    throw new Error("Error booking apartment");
+  }
+};
+
+//Update user profile
 export const updateProfile = async (userFormData: FormData) => {
-  
   const userId = userFormData.get("userId");
   const firstName = userFormData.get("firstName");
   const lastName = userFormData.get("lastName");
@@ -236,28 +254,22 @@ export const updateProfile = async (userFormData: FormData) => {
     email,
     userReligion,
     password,
-    userWalletAddress
+    userWalletAddress,
   };
-  const response = await fetch(
-    `${API_BASE_URL}/api/users/${userId}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-      credentials: "include",
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error("Failed to update the user profile");
   }
   return response.json();
-
 };
-
-
 
 export const updateMyApartmentById = async (apartmentFormData: FormData) => {
   const response = await fetch(
@@ -273,6 +285,33 @@ export const updateMyApartmentById = async (apartmentFormData: FormData) => {
     throw new Error("Failed to update the apartment");
   }
   return response.json();
+};
+
+//delete temp record
+export const deleteTempBooking = async (
+  apartmentId: string,
+  userId: string
+): Promise<void> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/apartments/${apartmentId}/deletetempbookings`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Add any additional headers if needed
+        },
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete temporary booking");
+    }
+  } catch (error) {
+    console.error("Error deleting temporary booking:", error);
+    throw new Error("Failed to delete temporary booking");
+  }
 };
 
 export type SearchParams = {
@@ -366,7 +405,6 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   }
 };
 export const getmyBookings = async (): Promise<ApartmentType[]> => {
-  
   try {
     const response = await fetch(`http://localhost:3000/api/bookedapartments`, {
       credentials: "include",
@@ -378,17 +416,18 @@ export const getmyBookings = async (): Promise<ApartmentType[]> => {
 
     return response.json();
   } catch (error) {
-   
     throw new Error("Unable to fetch bookings");
   }
 };
 
 export const getApartmentById = async (apartmentId: string) => {
-  
   try {
-    const response = await fetch( `${API_BASE_URL}/api/bookedapartments/${apartmentId}`, {
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/bookedapartments/${apartmentId}`,
+      {
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -396,7 +435,6 @@ export const getApartmentById = async (apartmentId: string) => {
 
     return response.json();
   } catch (error) {
-   
     throw new Error("Unable to fetch bookings");
   }
 };
