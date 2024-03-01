@@ -32,6 +32,7 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
   const location = useLocation();
   const [isBookNowVisible, setIsBookNowVisible] = useState(false);
   const [isPreBookVisible, setIsPreBookVisible] = useState(true);
+  const [isReserved, setIsReserved] = useState(false);
   const { userId } = useAppContext();
   useEffect(() => {
     const fetchData = async () => {
@@ -39,14 +40,11 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
         const { tempBookings } = await apiClient.fetchApartmentById(
           apartmentId
         );
-
-        const currentUserId = userId; 
-
+        const currentUserId = userId;
         // Check if the current user has a temp booking
         const userTempBooking = tempBookings.find(
           (booking) => booking.userId === currentUserId
         );
-
         if (userTempBooking) {
           // Compare the currentDate with the validityDate
           const currentDate = new Date();
@@ -60,6 +58,29 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
             setIsPreBookVisible(false);
           }
         }
+
+        const _apartmentsData = await apiClient.fetchAllApartments();
+        _apartmentsData.map((apartment) => {
+          // Check if bookings array exists and is not empty
+          if (apartment.bookings && apartment.bookings.length > 0) {
+            // Filter bookings based on userId and extract rentEndDate
+            const _rentEndDateOnly = apartment.bookings.filter((booking) => {
+              return (
+                booking.userId === userId &&
+                new Date(booking.rentEndDate) >= new Date()
+              );
+            })[0];
+            if (_rentEndDateOnly) {
+              // If a booking was found and rentEndDate is in the future
+              setIsReserved(true);
+            } else {
+              // No bookings found or rentEndDate is in the past
+              setIsReserved(false);
+            }
+          } else {
+            // console.log("No bookings found for apartment", apartment._id);
+          }
+        });
       } catch (error) {
         console.error("Error fetching apartment data:", error);
       }
@@ -117,25 +138,22 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
       validityDate, // You need to define where this comes from
     };
     try {
-       await apiClient.createTempBooking(tempBookingData);
-     
+      await apiClient.createTempBooking(tempBookingData);
     } catch (error) {
       console.error("Error creating temp booking:", error);
     }
   };
-  const onCancelClick =async (e) => {
+  const onCancelClick = async (e) => {
     e.preventDefault();
     setIsBookNowVisible(false);
     setIsPreBookVisible(true);
     // Run api on click event to remove data from apartments temp booking.
     //TODO: remove data of tempBookings from apartments document
     try {
-    
-      await apiClient.deleteTempBooking(apartmentId,userId);
-    
-   } catch (error) {
-     console.error("Error deleting temp booking:", error);
-   }
+      await apiClient.deleteTempBooking(apartmentId, userId);
+    } catch (error) {
+      console.error("Error deleting temp booking:", error);
+    }
   };
   return (
     <div className="flex flex-col p-4 bg-blue-200 gap-4">
@@ -207,28 +225,39 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
           </div>
           {isLoggedIn ? (
             <>
-              {isPreBookVisible && (
+              {isReserved ? (
                 <button
-                  onClick={onPreBookClick}
-                  className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl"
+                  className="bg-blue-600 text-white h-full p-2 font-bold text-xl opacity-50 cursor-not-allowed"
+                  disabled
                 >
-                  Book Now
+                  Already Booked
                 </button>
-              )}
-              {isBookNowVisible && (
+              ) : (
                 <>
-                  <button
-                    type="submit"
-                    className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl"
-                  >
-                    Confirm Booking
-                  </button>
-                  <button
-                    onClick={onCancelClick}
-                    className="bg-red-600 text-white h-full p-2 font-bold hover:bg-red-500 text-xl"
-                  >
-                    Cancel
-                  </button>
+                  {isPreBookVisible && (
+                    <button
+                      onClick={onPreBookClick}
+                      className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl"
+                    >
+                      Book Now
+                    </button>
+                  )}
+                  {isBookNowVisible && (
+                    <>
+                      <button
+                        type="submit"
+                        className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl"
+                      >
+                        Confirm Booking
+                      </button>
+                      <button
+                        onClick={onCancelClick}
+                        className="bg-red-600 text-white h-full p-2 font-bold hover:bg-red-500 text-xl"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </>
