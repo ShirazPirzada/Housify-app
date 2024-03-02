@@ -36,6 +36,7 @@ const ConfirmBookingComponent = ({
   const [_apartmentName, setApartmentName] = useState("");
   const [_location, setLocation] = useState("");
   const [landLordName, setLandLordName] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
   const _rentStartDatenew = rentStartDate;
   const _rentEndDatenew = rentEndDate;
   const [Liveprice, setLivePrice] = useState(0);
@@ -66,12 +67,15 @@ const ConfirmBookingComponent = ({
     const fetchLandLordData = async () => {
       try {
         const LandLordData = await apiClient.fetchUserById(landLordId || "");
-
+        setWalletAddress(LandLordData?.userWalletAddress);
         setLandLordName(LandLordData?.firstName);
+        
       } catch (error) {
         console.error("Error fetching landlord data:", error);
       }
     };
+
+ 
 
     if (!!apartmentId) {
       fetchApartmentData();
@@ -338,10 +342,10 @@ const ConfirmBookingComponent = ({
       const rentEndDate = _rentEndDate; // Example end date (Unix timestamp)
       const totalCost = ethers.parseEther(ethAmount.toString()); // Example total cost in sepolia eth (string)
       const totalCostInWei = totalCost; // Convert 0.0020 Ether to wei
-      const tenantWalletAddress = "0x86A0EE2555bB7DA4C5774b289850963035132ce0";
+      const tenantWalletAddress = currentUser.userWalletAddress;
       // Example tenant's wallet address
       const landlordWalletAddress =
-        "0x398021A6A8f8E189d328E3458030f6F150Cde3fc"; // Example landlord's wallet address
+        walletAddress; // Example landlord's wallet address
       const tenantName = currentUser.firstName; // Example tenant's name
       const landlordName = landLordName; // Example landlord's name
       const apartmentName = _apartmentName; // Example apartment name
