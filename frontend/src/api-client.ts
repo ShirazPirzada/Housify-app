@@ -4,7 +4,6 @@ import {
   ApartmentType,
   PaymentIntentResponse,
   SearchReponse,
-  TempBooking,
   UserType,
 } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";

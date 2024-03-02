@@ -125,8 +125,8 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
     setIsPreBookVisible(false);
     // Run api on click event to add data to apartments.
     //TODO: Add an array of tempBookings in apartments document
-    const currentDate = new Date(); // Get the current date
-    const validityDate = new Date(currentDate); // Create a new date object with the current date
+    const currentDate = new Date(); 
+    const validityDate = new Date(currentDate);
     validityDate.setDate(validityDate.getDate() + 3); // Add 3 days to the validityDate
 
     const tempBookingData: TempBookingFormData = {
