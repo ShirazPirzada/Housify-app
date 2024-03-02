@@ -7,6 +7,7 @@ import { UserType } from "../shared/types";
 import bcrypt from "bcryptjs";
 const { check, validationResult } = require("express-validator");
 const router = express.Router();
+var nodemailer = require('nodemailer');
 
 router.get("/me", verifyToken, async (req: Request, res: Response) => {
   const userId = req.userId;
@@ -14,7 +15,6 @@ router.get("/me", verifyToken, async (req: Request, res: Response) => {
     const user = await User.findById(userId).select("-password");
 
     if (!user) {
-      
       return res.status(404).json({ message: "User not found" });
     }
     res.json(user);
@@ -23,6 +23,7 @@ router.get("/me", verifyToken, async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
 
 router.get("/:id", async (req: Request, res: Response) => {
   const id = req.params.id.toString();
@@ -65,12 +66,10 @@ router.post(
       });
 
       if (!checkCnic) {
-        return res
-          .status(400)
-          .json({
-            message:
-              "Cnic does not exists in Nadra! Please get yourself registered at nadra!",
-          });
+        return res.status(400).json({
+          message:
+            "Cnic does not exists in Nadra! Please get yourself registered at nadra!",
+        });
       }
 
       if (user) {
@@ -103,9 +102,9 @@ router.post(
 router.put("/:userId", async (req: Request, res: Response) => {
   try {
     // Check if password is provided
-  
+
     const { password, ...updatedUserWithoutPassword } = req.body;
-    
+
     // If password is provided, hash it
     if (password) {
       req.body.password = await bcrypt.hash(password, 8);
@@ -118,7 +117,7 @@ router.put("/:userId", async (req: Request, res: Response) => {
       password ? req.body : updatedUserWithoutPassword, // Update accordingly
       { new: true }
     );
-   
+
     if (!user) {
       return res
         .status(404)
@@ -129,5 +128,108 @@ router.put("/:userId", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+router.post("/forgot-password", async (req: Request, res: Response) => {
+  const { email } = req.body;
+  try {
+    const oldUser = await User.findOne({ email });
+    if (!oldUser) {
+      return res.status(404).json({ message: "User does not exist!" });
+    }
+
+    const secret = process.env.JWT_SECRET_KEY + oldUser.password;
+    const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
+      expiresIn: "5m",
+    });
+    const link = `${process.env.FRONTEND_URL}/reset-password/${oldUser._id}/${token}`;
+    //EMAIL SEND
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'shirazxpirzada@gmail.com',
+        pass: 'eorb xjpf zjzw rgst'
+      }
+    });
+    
+    var mailOptions = {
+      from: 'shirazxpirzada@gmail.com',
+      to: oldUser.email,
+      subject: 'Password Reset Link',
+      text: 'Please click the following link to reset your password  '+link+''
+    };
+    
+    transporter.sendMail(mailOptions, function(error: any, info: { response: string; }){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+    return res.status(200).json({message:"Email Sent!"});
+  } catch (error) {
+    return res.status(500).json({message:"Something went wrong"})
+  }
+});
+
+router.get("/reset-password/:userId/:token",async(req:Request,res:Response)=>{
+  const userId=  req.params.userId;
+  const token=  req.params.token;
+  if(typeof userId === "undefined" && typeof token ==="undefined"){
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+  const oldUser = await User.findOne({ _id:userId });
+    if (!oldUser) {
+      return res.json({ message: "User does not exist!" });
+    }
+
+    const secret = process.env.JWT_SECRET_KEY + oldUser.password;
+    try {
+      
+       const verify = jwt.verify(token,secret);
+      
+       return res.status(200).json({message:"Token Valid"});
+    } catch (error) {
+      console.log("Error of token: ",error);
+      return res.status(500).json({ message: "Token Invalid or Expired" });
+    }
+    
+})
+
+router.post("/reset-password/:userId/:token",async(req:Request,res:Response)=>{
+  const userId=  req.params.userId;
+  const token=  req.params.token;
+  const {password} = req.body;
+  if(typeof userId === "undefined" && typeof token ==="undefined"){
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+  const oldUser = await User.findOne({ _id:userId });
+    if (!oldUser) {
+      return res.json({ message: "User does not exist!" });
+    }
+
+    const secret = process.env.JWT_SECRET_KEY + oldUser.password;
+    try {
+      jwt.verify(token,secret);
+      const encryptedPassword = await bcrypt.hash(password, 8);
+      const user = await User.findOneAndUpdate(
+        {
+          _id: userId,
+        },
+        {
+          $set:{
+            password:encryptedPassword
+          },
+        },
+        { new: true }
+        // password ? req.body : updatedUserWithoutPassword, // Update accordingly
+        // { new: true }
+      );
+      res.json({message:"Password Resetted Successfully"});
+    } catch (error) {
+      res.json({message:"Token Invalid"});
+    }
+
+})
+
 
 export default router;

@@ -8,6 +8,8 @@ import {
 } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import { TempBookingFormData } from "./forms/UserForm/UserForm";
+import { forgotPasswordData } from "./pages/ForgotPassword";
+import { resetPassword } from "./pages/ResetPassword";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 export const validateToken = async () => {
   try {
@@ -73,6 +75,61 @@ export const signIn = async (formData: SignInFormData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
+  });
+
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+  return body;
+};
+
+//Forgot password api
+export const forgotpassword = async (formData: forgotPasswordData) => {
+  const response = await fetch(`${API_BASE_URL}/api/users/forgot-password`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+ 
+  return body;
+};
+
+export const getresetpassword = async (userId, token) => {
+  const response = await fetch(`${API_BASE_URL}/api/users/reset-password/${userId}/${token}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.message);
+  }
+  return body; // Return the parsed JSON response body
+};
+
+//Reset Password
+//Forgot password api
+export const resetpassword = async (userId: string, token: string, resetPasswordData: resetPassword) => {
+  
+  const response = await fetch(`${API_BASE_URL}/api/users/reset-password/${userId}/${token}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(resetPasswordData),
   });
 
   const body = await response.json();

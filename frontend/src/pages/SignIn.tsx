@@ -68,7 +68,12 @@ const SignIn = () =>{
             </label>
             <span className="flex items-center justify-between">
                 <span className="text-sm">Not Registered ?  
-                <Link className="underline" to="/register"> Create an account here</Link></span>
+                <Link className="underline" to="/register"> Create an account here</Link>
+                <br/>
+                <Link className="underline" to="/forgotpassword"> Forgot Password?</Link>
+                </span>
+            
+                
                 <button
                     type="submit"
                     className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl">

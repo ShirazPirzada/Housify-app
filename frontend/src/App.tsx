@@ -18,10 +18,12 @@ import MyBookings from "./pages/MyBookings";
 import Profile from "./pages/Profile";
 import HomePage from "./pages/HomePage";
 import AdminDashboard from "./pages/AdminDashboard";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const { isLoggedIn } = useAppContext();
-  
+
   return (
     <Router>
       <Routes>
@@ -29,16 +31,19 @@ function App() {
           path="/"
           element={
             <Layout isSignInPage={false}>
-
-              <HomePage/>
+              <HomePage />
             </Layout>
           }
         />
-          <Route
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+
+        <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
+
+        <Route
           path="/admin"
           element={
             <Layout isSignInPage={false}>
-              <AdminDashboard/>
+              <AdminDashboard />
             </Layout>
           }
         />

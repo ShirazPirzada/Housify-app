@@ -44,7 +44,7 @@ router.post(
         { userId: user.id },
         process.env.JWT_SECRET_KEY as string,
         {
-          expiresIn: "7d",
+          expiresIn: "1d",
         }
       );
       res.cookie("auth_token", token, {
