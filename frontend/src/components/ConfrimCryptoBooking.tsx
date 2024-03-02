@@ -120,7 +120,10 @@ const ConfirmBookingComponent = ({
       alert("Please connect your wallet first");
       return;
     }
-
+    if(typeof currentUser.userWalletAddress ==="undefined"  || currentUser.userWalletAddress===null || currentUser.userWalletAddress===""){
+      alert("Please Add your wallet address first in the profile section.");
+      return;
+    }
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const ContractAddress = "0x5759c75072c2956Fb56c33f843D86411F3fBE28F";
