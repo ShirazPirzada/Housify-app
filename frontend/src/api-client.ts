@@ -365,7 +365,7 @@ export const deleteBooking = async (
 ): Promise<void> => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/apartments/${apartmentId}/deletebookings`,
+      `${API_BASE_URL}/api/apartments/${apartmentId}/${userId}/deletebookings`,
       {
         method: "POST",
         headers: {

@@ -291,34 +291,27 @@ router.post(
 
 //delete bookings
 router.post(
-  "/:apartmentId/deletebookings",
+  "/:apartmentId/:userId/deletebookings",
   verifyToken,
   async (req: Request, res: Response) => {
     try {
       console.log("Inside the delete bookings api")
-      const userId = req.userId;
+      const userId = req.params.userId;
       const apartmentId = req.params.apartmentId;
     
+      console.log("UserId : ",userId);
 
       const apartment = await Apartment.findOneAndUpdate(
-        {
-          _id:apartmentId
-        },
-        {
-          $pull: {
-            bookings: {
-              userId: userId,
-            },
-          },
-        },
-        { new: true, fields: { bookings: 1 } }
+        { _id: apartmentId },
+        { $pull: { bookings: { userId: userId } } },
+        { new: true }
       );
-
+      console.log("Apartment:", apartment);
       if (!apartment) {
         return res.status(404).json({ message: "Apartment not found" });
       }
 
-      await apartment.save();
+       await apartment.save();
 
       res.status(200).send();
     } catch (error) {

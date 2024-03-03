@@ -39,18 +39,21 @@ const MyApartments = () => {
   const handleTerminateBooking = async (apartmentId, userId) => {
     try {
 
-        // Update apartmentData by filtering out the terminated booking
-        const updatedApartments = apartmentData.map(apartment => ({
-          ...apartment,
-          bookings: apartment.bookings.filter(booking => booking.userId !== userId)
-        }));
-      
-      await apiClient.deleteBooking(apartmentId, userId);
-
+     // Display confirmation dialog
+    const confirmed = window.confirm("Are you sure you want to terminate this contract?");
     
-      console.log("Updated data: ",updatedApartments);
-     
+    // If user confirms
+    if (confirmed) {
+      // Proceed with deleting the booking
+      await apiClient.deleteBooking(apartmentId, userId);
+  
+      // Update apartment data locally
+      const updatedApartments = apartmentData.map(apartment => ({
+        ...apartment,
+        bookings: apartment.bookings.filter(booking => booking.userId !== userId)
+      }));
       setApartmentData(updatedApartments);
+    }
     } catch (error) {
       console.error('Failed to terminate booking:', error);
      
