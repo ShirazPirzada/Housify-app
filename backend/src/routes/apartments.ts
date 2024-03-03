@@ -56,7 +56,7 @@ router.get("/search", async (req: Request, res: Response) => {
 });
 router.get("/allapartments", async (req: Request, res: Response) => {
   try {
-    const allApartments = await Apartment.find({ isActive: true }).limit(4);
+    const allApartments = await Apartment.find({ isActive: true });
 
     if (!allApartments || allApartments.length === 0) {
       return res.status(404).json({ message: "No apartments found" });
