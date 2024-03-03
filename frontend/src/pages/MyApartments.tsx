@@ -30,10 +30,11 @@ const MyApartments = () => {
           <div className="flex flex-col justify-between border border-slate-300 rounded-lg p-8 gap-5">
             <h2 className="text-2xl font-bold">{apartment.name}</h2>
             <div className="whitespace-pre-line">{apartment.description}</div>
+            <div className="whitespace-pre-line">Contact#: {apartment.ContactNo ? apartment.ContactNo:"Not found" }</div>
             <div className="grid grid-cols-5 gap-2">
               <div className="border border-slate-300 rounded-sm p-3 flex items-center">
                 <BsMap className="mr-1" />
-                {apartment.city},{apartment.country}
+                {apartment.city},{apartment.country} 
               </div>
               <div className="border border-slate-300 rounded-sm p-3 flex items-center">
                 <BsBuilding className="mr-1" />

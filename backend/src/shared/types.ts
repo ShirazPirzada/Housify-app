@@ -19,6 +19,7 @@ export type ApartmentType = {
   description: string;
   type: string;
   tenantCount: number;
+  ContactNo: number;
   facilities: string[];
   pricePerMonth: number;
   Rating: number;

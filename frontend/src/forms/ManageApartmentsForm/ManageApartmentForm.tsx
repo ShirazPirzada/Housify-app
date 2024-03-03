@@ -19,6 +19,7 @@ export type ApartmentFormData = {
   imageFiles: FileList;
   imageUrls: string[];
   tenantCount: number;
+  ContactNo: number;
 };
 
 type Props = {
@@ -43,6 +44,7 @@ const ManageApartmentForm = ({ onSave, isLoading, apartment }: Props) => {
     formData.append("name", formDataJson.name);
     formData.append("city", formDataJson.city);
     formData.append("country", formDataJson.country);
+    formData.append("ContactNo", formDataJson.ContactNo.toString());
     formData.append("description", formDataJson.description);
     formData.append("type", formDataJson.type);
     formData.append("pricePerMonth", formDataJson.pricePerMonth.toString());

@@ -29,6 +29,7 @@ const apartmentSchema = new mongoose.Schema<ApartmentType>({
   description: { type: String, required: true },
   type: { type: String, required: true },
   tenantCount: { type: Number, required: true },
+  ContactNo: { type: Number, required: true },
   facilities: [{ type: String, required: true }],
   pricePerMonth: { type: Number, required: true },
   Rating: { type: Number, required: true, min: 1, max: 5 },

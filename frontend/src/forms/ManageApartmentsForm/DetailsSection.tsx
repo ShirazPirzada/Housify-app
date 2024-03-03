@@ -45,7 +45,19 @@ const DetailsSection = () => {
           )}
         </label>
       </div>
-
+      <div className="flex gap-4">
+      <label className="text-gray-700 text-sm font-bold flex-1">
+          Contact#:
+          <input
+            type="text"
+            className="border rounded w-full py-1 px-2 font-normal"
+            {...register("ContactNo", { required: "This field is required" })}
+          ></input>
+          {errors.country && (
+            <span className="text-red-500">{errors.country.message}</span>
+          )}
+        </label>
+      </div>
       <label className="text-gray-700 text-sm font-bold flex-1">
         Description
         <textarea
