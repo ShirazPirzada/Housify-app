@@ -298,24 +298,20 @@ router.post(
       console.log("Inside the delete bookings api")
       const userId = req.userId;
       const apartmentId = req.params.apartmentId;
-      console.log("Details: ",userId,' ,',apartmentId);
+    
 
       const apartment = await Apartment.findOneAndUpdate(
         {
-          $and: [
-            { "boookings.apartmentId": apartmentId },
-            { "boookings.userId": userId },
-          ],
+          _id:apartmentId
         },
         {
           $pull: {
-            boookings: {
-              apartmentId: apartmentId,
+            bookings: {
               userId: userId,
             },
           },
         },
-        { new: true, fields: { boookings: 1 } }
+        { new: true, fields: { bookings: 1 } }
       );
 
       if (!apartment) {

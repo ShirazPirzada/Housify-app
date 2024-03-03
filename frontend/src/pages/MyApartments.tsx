@@ -44,16 +44,16 @@ const MyApartments = () => {
           ...apartment,
           bookings: apartment.bookings.filter(booking => booking.userId !== userId)
         }));
-      // Execute the API call to delete the temporary booking
+      
       await apiClient.deleteBooking(apartmentId, userId);
 
     
       console.log("Updated data: ",updatedApartments);
-      // Update the state with the modified apartmentData
+     
       setApartmentData(updatedApartments);
     } catch (error) {
       console.error('Failed to terminate booking:', error);
-      // Handle error (display an error message, etc.)
+     
     }
   };
 
