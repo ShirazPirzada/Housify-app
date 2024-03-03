@@ -59,28 +59,36 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
           }
         }
 
-        const _apartmentsData = await apiClient.fetchAllApartments();
-        _apartmentsData.map((apartment) => {
+        const _apartmentsData = await apiClient.getAllApartments();
+        let bookingFound = false; // Variable to track if booking is found
+
+        _apartmentsData.some((apartment) => {
           // Check if bookings array exists and is not empty
           if (apartment.bookings && apartment.bookings.length > 0) {
-            // Filter bookings based on userId and extract rentEndDate
-            const _rentEndDateOnly = apartment.bookings.filter((booking) => {
+            // Find a booking based on userId and extract rentEndDate
+            const _rentEndDateOnly = apartment.bookings.find((booking) => {
               return (
                 booking.userId === userId &&
                 new Date(booking.rentEndDate) >= new Date()
               );
-            })[0];
+            });
+        
+            // Check if a booking was found
             if (_rentEndDateOnly) {
               // If a booking was found and rentEndDate is in the future
               setIsReserved(true);
-            } else {
-              // No bookings found or rentEndDate is in the past
-              setIsReserved(false);
+              bookingFound = true; // Set bookingFound to true
+              return true; // Break out of the some loop
             }
-          } else {
-            // console.log("No bookings found for apartment", apartment._id);
           }
+          return false; // Continue iterating over apartments
         });
+        
+        // Check if booking was found
+        if (!bookingFound) {
+          // No bookings found or rentEndDate is in the past
+          setIsReserved(false);
+        }
       } catch (error) {
         console.error("Error fetching apartment data:", error);
       }

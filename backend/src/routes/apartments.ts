@@ -68,6 +68,22 @@ router.get("/allapartments", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/getallapartments", async (req: Request, res: Response) => {
+  try {
+    const allApartments = await Apartment.find({ isActive: true });
+
+    if (!allApartments || allApartments.length === 0) {
+      return res.status(404).json({ message: "No apartments found" });
+    }
+    res.json(allApartments);
+  } catch (error) {
+    console.log("Error fetching Apartments", error);
+    res.status(500).json({ message: "Error fetching Apartments" });
+  }
+});
+
+
+
 router.get("/inactiveapartments", async (req: Request, res: Response) => {
   try {
     const allApartments = await Apartment.find({ isActive: false });

@@ -210,6 +210,20 @@ export const fetchAllApartments = async (): Promise<ApartmentType[]> => {
   }
   return response.json();
 };
+
+//GET ALL APARTMENTS FOR 
+export const getAllApartments = async (): Promise<ApartmentType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/apartments/getallapartments`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching apartments");
+  }
+  return response.json();
+};
+
+
+
 //fetch inactive apartments
 export const fetchInActiveApartments = async (): Promise<ApartmentType[]> => {
   const response = await fetch(
