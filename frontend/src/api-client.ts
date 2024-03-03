@@ -169,6 +169,7 @@ export const getmyApartments = async (): Promise<ApartmentType[]> => {
   if (!response.ok) {
     throw new Error("Error fetching apartments");
   }
+ 
   return response.json();
 };
 
@@ -356,6 +357,36 @@ export const updateMyApartmentById = async (apartmentFormData: FormData) => {
   }
   return response.json();
 };
+
+//delete booking record
+export const deleteBooking = async (
+  apartmentId: string,
+  userId: string
+): Promise<void> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/apartments/${apartmentId}/deletebookings`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Add any additional headers if needed
+        },
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete  booking");
+    }
+  } catch (error) {
+    console.error("Error deleting  booking:", error);
+    throw new Error("Failed to delete  booking");
+  }
+};
+
+
+
 
 //delete temp record
 export const deleteTempBooking = async (

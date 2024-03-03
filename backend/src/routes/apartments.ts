@@ -289,6 +289,51 @@ router.post(
   }
 );
 
+//delete bookings
+router.post(
+  "/:apartmentId/deletebookings",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      console.log("Inside the delete bookings api")
+      const userId = req.userId;
+      const apartmentId = req.params.apartmentId;
+      console.log("Details: ",userId,' ,',apartmentId);
+
+      const apartment = await Apartment.findOneAndUpdate(
+        {
+          $and: [
+            { "boookings.apartmentId": apartmentId },
+            { "boookings.userId": userId },
+          ],
+        },
+        {
+          $pull: {
+            boookings: {
+              apartmentId: apartmentId,
+              userId: userId,
+            },
+          },
+        },
+        { new: true, fields: { boookings: 1 } }
+      );
+
+      if (!apartment) {
+        return res.status(404).json({ message: "Apartment not found" });
+      }
+
+      await apartment.save();
+
+      res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "something went wrong" });
+    }
+  }
+);
+
+
+
 //delete temp bookings
 router.post(
   "/:apartmentId/deletetempbookings",

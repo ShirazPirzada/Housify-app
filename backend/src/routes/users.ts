@@ -56,7 +56,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
     }
-    // Check User's Cnic if not found. User is not legitimate.
+    //Get user Details
     try {
       let user = await User.findOne({
         email: req.body.email,
@@ -64,7 +64,7 @@ router.post(
       let checkCnic = await Model_CNIC.findOne({
         National_Identity_CardNumber: req.body.CNIC,
       });
-
+// Check User's Cnic if not found. User is not legitimate.
       if (!checkCnic) {
         return res.status(400).json({
           message:

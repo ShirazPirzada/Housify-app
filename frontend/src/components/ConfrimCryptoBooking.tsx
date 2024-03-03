@@ -40,6 +40,7 @@ const ConfirmBookingComponent = ({
   const _rentStartDatenew = rentStartDate;
   const _rentEndDatenew = rentEndDate;
   const [Liveprice, setLivePrice] = useState(0);
+  //api key for checking live price of ethereum.
   const apiKey = 'CG-GJtQCf5gVtoSZyRtVnY6Do9R	'; 
 
   useEffect(() => {
@@ -120,7 +121,7 @@ const ConfirmBookingComponent = ({
       alert("Please connect your wallet first");
       return;
     }
-    if(typeof currentUser.userWalletAddress ==="undefined"  || currentUser.userWalletAddress===null || currentUser.userWalletAddress===""){
+    if(typeof currentUser.userWalletAddress ==="undefined"  || currentUser.userWalletAddress===null || currentUser.userWalletAddress==="" || currentUser.userWalletAddress==="NA"){
       alert("Please Add your wallet address first in the profile section.");
       return;
     }
@@ -321,7 +322,7 @@ const ConfirmBookingComponent = ({
     
     // Convert PKR amount to ETH
     const pkrAmount = paymentIntent.totalCost; // Amount in PKR
-    const exchangeRate = Liveprice; // Hypothetical exchange rate: 1 ETH = 806,998.96 INR
+    const exchangeRate = Liveprice; // Hypothetical exchange rate: 1 ETH = 806,998.96 PKR
     const ethAmount = pkrAmount / exchangeRate; // Equivalent amount in ETH
 
     // Convert ETH amount to Wei
