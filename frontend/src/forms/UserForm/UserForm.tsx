@@ -230,7 +230,7 @@ const UserForm = ({ apartmentId, pricePerMonth }: Props) => {
                   className="bg-blue-600 text-white h-full p-2 font-bold text-xl opacity-50 cursor-not-allowed"
                   disabled
                 >
-                  Already Booked
+                  You can't Book more than one!
                 </button>
               ) : (
                 <>
